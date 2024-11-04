@@ -1,0 +1,4 @@
+openai
+pyautogen
+semantic-kernel
+python-dotenv
