@@ -12,7 +12,7 @@ Before you begin, please follow the `00-set-up.ipynb` notebook to set up your en
 
 ### Getting Started in the Agent World
 
-For an introduction to the agent world, including definitions and documentation, please visit the `01-agents-101-faq.ipynb` notebook.
+For an introduction to the agent world, including definitions and FAQ, please visit the `01-agents-101-faq.ipynb` notebook.
 
 ### Deep Dive into Agentic Patterns
 
@@ -20,7 +20,7 @@ For an in-depth exploration of agentic patterns using v1 (0.2) AutoGen, visit th
 
 ### Understanding Orchestration Frameworks
 
-To understand the basics of the orchestration framework that powers Copilot Semantic Kernel and to build a multi-agent architecture with Semantic Kernel version 0.20, see the `03-agentic-with-semantic-kernel.ipynb` notebook.
+To understand the basics of the orchestration framework (Semantic Kernel) that powers Microsoft Copilot and to build a multi-agent architecture, see the `03-agentic-with-semantic-kernel.ipynb` notebook.
 
 Many more resources will be added—stay tuned..
 
