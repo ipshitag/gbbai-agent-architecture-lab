@@ -1,4 +1,4 @@
-# 🤖 AI Agentic Design Patterns with AutoGen
+# 🤖 AI Agentic Design Patterns
 
 Welcome to our project, where we delve into the exploration of diverse agentic architectures, focusing on the development and implementation of AI agentic engines and multi-agent systems. This repository serves as a comprehensive guide for researchers, developers, and enthusiasts interested in advancing the field of AI through innovative agentic frameworks and collaborative agent systems.
 
