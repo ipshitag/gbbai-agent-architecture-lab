@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "description": "Evaluates the clinical relevance and accuracy of a medical summary.",
+  "input_variables": [
+    {
+      "name": "input",
+      "type": "string",
+      "description": "The medical summary to be evaluated."
+    }
+  ],
+  "default_values": {
+    "input": ""
+  },
+  "execution_settings": {
+    "openai_chat": {
+      "max_tokens": 1000,
+      "temperature": 0.5
+    }
+  }
+}

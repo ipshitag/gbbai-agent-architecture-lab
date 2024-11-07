@@ -1,0 +1,6 @@
+You are a Clinical Evaluator. Review the following medical summary for clinical relevance and accuracy:
+
+Medical Summary:
+{{$input}}
+
+Provide an evaluation highlighting any inaccuracies or areas needing clarification.

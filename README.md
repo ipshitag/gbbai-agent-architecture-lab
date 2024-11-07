@@ -4,36 +4,37 @@ Welcome to our project, where we delve into the exploration of diverse agentic a
 
 ## 🚀 Getting Started
 
-This project is dedicated to the exploration and implementation of cutting-edge AI agentic design patterns and multi-agent architectures. Here, you'll find resources, examples, and documentation designed to facilitate the development of complex, collaborative AI systems.
+Welcome to the exploration and implementation of cutting-edge AI agentic design patterns and multi-agent architectures. This project provides resources, examples, and documentation to facilitate the development of complex, collaborative AI systems.
 
 ### Prerequisites
 
-Before you begin, ensure you have the following:
+Before you begin, please follow the `00-setup` notebook to set up your environment.
 
-- Python 3.8 or later
-- Familiarity with AI concepts and multi-agent systems
-- Access to Azure OpenAI (Ensure you have an Azure account and have set up Azure OpenAI service)
+### Getting Started in the Agent World
 
-## 🤖 Exploring AI Agentic Design Patterns
+For an introduction to the agent world, including definitions and documentation, please visit the `00-faq.ipynb` notebook.
 
-Our project covers a wide range of topics related to AI agentic design and multi-agent systems, including:
+### Deep Dive into Agentic Patterns
 
-- **Introduction to Agentic Architectures**: Understanding the fundamentals of agentic architectures and their significance in AI development.
-- **Building Multi-Agent Systems**: A comprehensive guide to constructing multi-agent systems using AutoGen's `ConversableAgent`.
-- **Multi-Agent Collaboration Design Patterns**: Strategies for enabling seamless collaboration among agents to tackle complex tasks.
-- **Agent Reflection Framework**: Techniques for generating and refining high-quality content through agent collaboration.
+For an in-depth exploration of agentic patterns using v1 (0.2) AutoGen, visit the `01-autogen` notebook.
 
-## 🛠️ Implementing Your Agentic Systems
+### Understanding Orchestration Frameworks
 
-Follow our step-by-step guides to implement your own agentic systems and multi-agent architectures:
+To understand the basics of the orchestration framework that powers Copilot Semantic Kernel and to build a multi-agent architecture with Semantic Kernel version 0.20, see the `02-semantic-kernel` notebook.
 
-1. **Understand the Basics**: Start with our introduction to agentic architectures to grasp the foundational concepts.
-2. **Explore Design Patterns**: Dive into our design patterns for building collaborative multi-agent systems.
-3. **Apply and Experiment**: Use our examples as a starting point to implement and experiment with your own agentic systems.
-4. **Iterate and Improve**: Continuously refine your systems based on feedback and performance evaluations.
+Many more resources will be added—stay tuned..
 
 ## 📚 Resources
 
-- **Project Documentation**: For detailed information on the project and its components, visit our [Documentation]().
-- **Tutorials**: Check out our [Tutorials]() for hands-on guides on creating and implementing AI agentic design patterns and multi-agent systems.
+### Tutorials
+
+Check out my blog [Tutorials](https://pabloaicorner.hashnode.dev/?source=top_nav_blog_home) for hands-on guides on creating and implementing AI agentic design patterns and multi-agent systems.
+
+### AutoGen Resources
+
+- **AutoGen Documentation**: Comprehensive guides and API references for [AutoGen](https://github.com/microsoft/autogen).
+
+### Semantic Kernel Resources
+
+- **Semantic Kernel Documentation**: Detailed documentation on [Semantic Kernel's](https://learn.microsoft.com/en-us/semantic-kernel/overview/) features and capabilities.
 

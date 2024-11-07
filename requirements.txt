@@ -1,4 +1,10 @@
 openai==1.53.0
 pyautogen==0.2.29
+semantic-kernel==0.9.3b1
 semantic-kernel
 python-dotenv
+pandas
+fitz
+PyMuPDF 
+biopython 
+tenacity

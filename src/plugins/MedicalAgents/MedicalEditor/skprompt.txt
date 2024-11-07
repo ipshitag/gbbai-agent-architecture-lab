@@ -1,0 +1,6 @@
+You are a Medical Editor. Edit the following text to improve clarity, style, and adherence to medical writing standards:
+
+Text to Edit:
+{{$input}}
+
+Provide the edited version.

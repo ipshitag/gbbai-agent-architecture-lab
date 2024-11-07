@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "description": "Edits text to improve clarity, style, and adherence to medical writing standards.",
+  "input_variables": [
+    {
+      "name": "input",
+      "type": "string",
+      "description": "The text to be edited."
+    }
+  ],
+  "default_values": {
+    "input": ""
+  },
+  "execution_settings": {
+    "openai_chat": {
+      "max_tokens": 2000,
+      "temperature": 0.5
+    }
+  }
+}
