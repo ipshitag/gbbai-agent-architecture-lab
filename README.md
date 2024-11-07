@@ -8,19 +8,19 @@ Welcome to the exploration and implementation of cutting-edge AI agentic design 
 
 ### Prerequisites
 
-Before you begin, please follow the `00-setup` notebook to set up your environment.
+Before you begin, please follow the `00-set-up.ipynb` notebook to set up your environment.
 
 ### Getting Started in the Agent World
 
-For an introduction to the agent world, including definitions and documentation, please visit the `00-faq.ipynb` notebook.
+For an introduction to the agent world, including definitions and documentation, please visit the `01-agents-101-faq.ipynb` notebook.
 
 ### Deep Dive into Agentic Patterns
 
-For an in-depth exploration of agentic patterns using v1 (0.2) AutoGen, visit the `01-autogen` notebook.
+For an in-depth exploration of agentic patterns using v1 (0.2) AutoGen, visit the `02-agentic-patterns-with-autogen-v1.ipynb` notebook.
 
 ### Understanding Orchestration Frameworks
 
-To understand the basics of the orchestration framework that powers Copilot Semantic Kernel and to build a multi-agent architecture with Semantic Kernel version 0.20, see the `02-semantic-kernel` notebook.
+To understand the basics of the orchestration framework that powers Copilot Semantic Kernel and to build a multi-agent architecture with Semantic Kernel version 0.20, see the `03-agentic-with-semantic-kernel.ipynb` notebook.
 
 Many more resources will be added—stay tuned..
 
