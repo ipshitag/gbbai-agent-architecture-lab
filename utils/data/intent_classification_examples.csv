@@ -1,0 +1,31 @@
+Query,Intent
+Can you give me a quick rundown of last night’s Celtics game?,summarize
+I just need a high-level recap of the Warriors’ playoff performance.,summarize
+What’s the short version of how the Bears did this season?,summarize
+What’s the backstory on the 1984 NBA Finals?,historical
+Which other teams did Tom Brady play for besides the Patriots?,historical
+Tell me about Michael Jordan’s game against the Utah Jazz in the ‘97 Finals.,historical
+What are the detailed stats for Lionel Messi in the World Cup?,statistics
+Could you provide LeBron’s average assists for the past three seasons?,statistics
+"How many strikeouts did Clayton Kershaw have this season, including playoffs?",statistics
+"When do the Packers face the Vikings next, including the venue?",schedule
+Can you share the full schedule for the upcoming NHL playoffs?,schedule
+What’s the timeline for the World Cup qualifiers this year?,schedule
+Who’s the backup quarterback for the Kansas City Chiefs?,roster
+Tell me all the forwards currently listed for the LA Kings.,roster
+Who are the newest players added to the Brooklyn Nets this year?,roster
+Where do the Milwaukee Bucks rank in the Eastern Conference standings?,standings
+What’s the latest ranking of teams in the Premier League?,standings
+Could you tell me the current MLB standings for the National League?,standings
+Why am I unable to access live NFL games on the ESPN app?,support
+Do I need a subscription upgrade to watch games in 4K on ESPN+?,support
+How do I fix playback errors on live streams for hockey matches?,support
+What’s the latest buzz in the NFL and MLB from this week?,catchMeUp
+Catch me up on all the major sports news across basketball and soccer.,catchMeUp
+Give me a quick update on what happened in the world of sports yesterday.,catchMeUp
+What was the final score for the Dodgers-Giants game last night?,scores
+How did the Steelers do in their game against the Ravens yesterday?,scores
+Can you tell me the result of the Suns versus the Nuggets from earlier?,scores
+What’s the capital of Argentina?,None
+Do you know the best recipes for making lasagna?,None
+What’s the weather forecast for Los Angeles tomorrow?,None

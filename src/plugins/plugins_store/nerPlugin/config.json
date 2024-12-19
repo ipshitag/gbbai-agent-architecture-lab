@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "description": "Extract and classify named entities from a sports-related user query into predefined categories (e.g., Person, Organization, DateTime, etc.)",
+  "execution_settings": {
+    "default": {
+      "max_tokens": 1000,
+      "temperature": 0.0,
+      "top_p": 0.0,
+      "presence_penalty": 0.0,
+      "frequency_penalty": 0.0
+    }
+  },
+  "input_variables": [
+    {
+      "name": "input",
+      "type": "string",
+      "description": "The user’s sports-related query or statement to be analyzed for named entities"
+    }
+  ]
+}

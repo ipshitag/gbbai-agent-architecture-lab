@@ -1,11 +1,11 @@
 {
   "schema": 1,
-  "description": "Evaluates the clinical relevance and accuracy of a medical summary.",
+  "description": "Classifies sports-related user queries into predefined intent categories (e.g., summarize, historical, scores, etc.).",
   "input_variables": [
     {
       "name": "input",
       "type": "string",
-      "description": "The medical summary to be evaluated."
+      "description": "The user's sports-related query or statement to be classified into an intent category."
     }
   ],
   "default_values": {
@@ -14,10 +14,10 @@
   "execution_settings": {
     "default": {
       "max_tokens": 100,
-      "temperature": 0.7,
+      "temperature": 0.0,
       "top_p": 0.1,
-      "presence_penalty": 0.1,
-      "frequency_penalty": 0.1
+      "presence_penalty": 0.0,
+      "frequency_penalty": 0.0
     }
   }
 }

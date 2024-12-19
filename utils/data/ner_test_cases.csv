@@ -1,0 +1,43 @@
+Query,Category
+Who is the captain of the England cricket team?,Person
+Is Serena Williams retiring this year?,Person
+Tell me about Cristiano Ronaldo's career moves.,Person
+Which coach has the most NBA titles?,PersonType
+Who is the youngest goalkeeper in the Premier League?,PersonType
+Name a quarterback who threw over 50 touchdowns last season.,PersonType
+Where was the Super Bowl held this year?,Location
+What's the venue for the Wimbledon finals?,Location
+Tell me about the history of Madison Square Garden.,Location
+Which organization manages Formula 1 races?,Organization
+Who sponsors the Indian cricket team currently?,Organization
+Name the football clubs in the UEFA Champions League quarter-finals.,Organization
+When is the NBA Draft happening this year?,Event
+What are the highlights of the Tour de France?,Event
+Is the FIFA World Cup final sold out?,Event
+What basketball shoes are endorsed by Michael Jordan?,Product
+Which brand produces official FIFA World Cup balls?,Product
+Tell me about the latest cricket bats used in the IPL.,Product
+What skills are needed to excel as a football striker?,Skill
+How does a pitcher improve their curveball?,Skill
+What are the key techniques for mastering a tennis serve?,Skill
+Where is the headquarters of the International Olympic Committee?,Address
+Provide the address for the Yankee Stadium.,Address
+What’s the location of Manchester United’s home ground?,Address
+What's the contact number for the NBA helpdesk?,PhoneNumber
+How do I reach the customer support of ESPN?,PhoneNumber
+Provide the phone number for the NFL merchandise store.,PhoneNumber
+What is the contact email for Wimbledon ticket inquiries?,Email
+How can I email support for the Premier League app?,Email
+Provide the email address for FIFA media inquiries.,Email
+What's the official website for the NFL?,URL
+Where can I find the schedule for NBA games online?,URL
+Give me the URL for buying Wimbledon tickets.,URL
+What’s the IP address of the live stream server for the Super Bowl?,IP
+Provide the IP address for the MLB database server.,IP
+Which IP is being used for streaming FIFA matches?,IP
+When does the next Formula 1 season begin?,DateTime
+What time does the World Cup final start?,DateTime
+Give me the dates for the Olympic qualifiers.,DateTime
+How many goals were scored in the UEFA Champions League this season?,Quantity
+What percentage of the NFL players are under 25?,Quantity
+Provide the average weight of a professional rugby player.,Quantity

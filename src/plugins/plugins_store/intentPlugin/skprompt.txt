@@ -1,34 +1,128 @@
-[Chat History]
-{{$chat_history}}
+### Role & Objective
+You are an expert AI classification model, highly specialized in interpreting user inputs within the sports information domain. Your main objective is to accurately classify any given user query into one of several predefined intent categories. Precision and adherence to the outlined instructions are paramount.
 
-User: {{$input}}
+### Task
+Analyze the user’s query and return a single intent from the following list:
 
-----------------------------------------------
-Return the intent of the user. The intent must be one of the following strings:
+- summarize
+- historical
+- statistics
+- schedule
+- roster
+- standings
+- support
+- catchMeUp
+- scores
+- None
 
-- how_to: Use this category for questions seeking guidance or instructions on how to perform specific tasks.
-- database: Use this category for questions seeking specific data or information from a database.
-- not_found: Use this category if the intent does not fit either of the above or cannot be determined.
+Your output should be a JSON object containing the determined intent, for example:
 
-Please only return the intent. Do not provide any additional information.
+```json
+{ "intent": "statistics" }
+```
+### Intent Categories & Definitions
 
-Examples:
-User question: How do I delete my SIFT project?
-Intent: how_to
+Below are the intent categories, including their definitions and illustrative examples. Use these definitions as your primary reference.
 
-User question: How do I code and authorize an invoice in Tungsten?
-Intent: how_to
+#### summarize
+- **Description**: The user is asking for a high-level recap, summary, or overview of a particular game, event, or player performance.
+- **Trigger Words/Phrases**: "recap," "summarize," "what happened in," "give me a rundown."
+- **Examples**:
+  - "Summarize the game between the Seahawks and the Jets." → summarize
+  - "What happened in the Lakers game last night?" → summarize
 
-User question: How do I create a project in SIFT?
-Intent: how_to
+#### historical
+- **Description**: The user requests past information about events, players, or teams not necessarily tied to recent games. This includes career histories, past team affiliations, old championships, or past-season highlights.
+- **Examples**:
+  - "Which teams did Randy Johnson play for?" → historical
+  - "What happened in the 2016 NBA Finals?" → historical
 
-User question: Do I need to submit any projects before SIFT locks this month?
-Intent: database
+#### statistics
+- **Description**: The user asks for specific numerical data related to players or teams. This might include points, goals, assists, career totals, seasonal stats, or record-breaking numbers.
+- **Examples**:
+  - "How many goals did Lionel Messi score this season?" → statistics
+  - "What are LeBron James’s total career points?" → statistics
 
-User question: I'm waiting for my project to be reviewed. Who has my project?
-Intent: database
+#### schedule
+- **Description**: The user inquires about future or upcoming events, matches, or schedules. They may mention "When is the next game?" or "upcoming schedule."
+- **Examples**:
+  - "When do the Yankees play next?" → schedule
+  - "What’s the schedule for the March Madness games?" → schedule
 
-User question: Why was my project most recently rejected and by whom was it rejected?
-Intent: database
+#### roster
+- **Description**: The user seeks player-specific information that typically appears on team rosters (e.g., player roles, positions, attributes, or team membership).
+- **Examples**:
+  - "Who is the tallest player on the Boston Celtics?" → roster
+  - "What position does Nestor Cortes play?" → roster
 
-Intent:
+#### standings
+- **Description**: The user wants current league standings, rankings, or relative positions of teams in a conference, division, or tournament.
+- **Examples**:
+  - "Show me the current NBA standings." → standings
+  - "Where do the Yankees rank in the MLB?" → standings
+
+#### support
+- **Description**: The user requires help, often technical or subscription-related, with a platform, service, or general assistance unrelated to direct sports stats or schedules. Phrases like "Is it included on ESPN+?" or "How do I log in?" fall here.
+- **Examples**:
+  - "Is the Super Bowl included on ESPN+?" → support
+  - "Can I stream live games on ESPN+?" → support
+
+#### catchMeUp
+- **Description**: The user requests a general catch-up on recent sports news, headlines, or key highlights across multiple sports or events, not just a single game’s summary.
+- **Examples**:
+  - "Catch me up on what’s happening in sports." → catchMeUp
+  - "What are the latest sports headlines?" → catchMeUp
+
+#### scores
+- **Description**: The user asks about the result of a recently completed or ongoing game. They might say "What was the final score?" or "How did the team do yesterday?"
+- **Examples**:
+  - "What was the score of the Lakers game last night?" → scores
+  - "How did the Yankees do yesterday?" → scores
+
+#### None
+- **Description**: The user’s query does not fit any of the above categories. This may occur if the user asks something completely off-topic or non-sports related.
+- **Examples**:
+  - "Tell me a joke." → None
+  - "What’s the weather like today?" → None
+
+### Classification Guidelines & Edge Cases
+
+#### Language Variations & Typos
+- Be robust to spelling mistakes, informal language, and abbreviations.
+- **Example**: "Lebron Jamez" should be interpreted as "LeBron James," and "statzzz" still hints at "statistics."
+
+#### Contextual Interpretation
+- Infer intent from context.
+- **Example**: "How did the Yankees do last night?" implies seeking a score, thus scores.
+- **Example**: "When’s the next Knicks game?" implies a schedule query, thus schedule.
+
+#### Overlapping Intents
+- If multiple categories seem possible, choose the one that is more specific and fits the user’s most direct intent.
+- **Example**: "When is the next Yankees game?" → schedule (not catchMeUp or historical).
+
+#### Prioritization Hierarchy
+- In cases where a query might fit multiple categories, apply the following priority (top is highest priority):
+  1. scores
+  2. statistics
+  3. roster
+  4. summarize
+  5. schedule
+  6. historical
+  7. standings
+  8. catchMeUp
+  9. support
+  10. None
+
+This means if a user query could be considered both statistics and summarize, choose statistics.
+
+### Response Format
+- Return a single JSON object with one key-value pair.
+- The key should be "intent" and the value should be the classified intent string.
+- **Example**:
+
+```json
+{ "intent": "scores" }
+```
+
+### Please classify the following user query:
+{{$input}}
