@@ -99,18 +99,18 @@ class ChatAgent:
             self.add_user_message(instructions)
 
         self.AZURE_OPENAI_KEY = azure_openai_key or os.getenv("AZURE_OPENAI_KEY")
-        self.AZURE_OPENAI_ENDPOINT = azure_openai_endpoint or os.getenv("AZURE_OPENAI_ENDPOINT")
+        self.AZURE_OPENAI_API_ENDPOINT = azure_openai_endpoint or os.getenv("AZURE_OPENAI_API_ENDPOINT")
         self.AZURE_OPENAI_API_VERSION = azure_openai_api_version or os.getenv("AZURE_OPENAI_API_VERSION")
-        self.AZURE_OPENAI_CHAT_DEPLOYMENT_ID = (
-            azure_openai_chat_deployment_id or os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT_ID")
+        self.AZURE_AOAI_CHAT_MODEL_NAME_DEPLOYMENT_ID = (
+            azure_openai_chat_deployment_id or os.getenv("AZURE_AOAI_CHAT_MODEL_NAME_DEPLOYMENT_ID")
         )
 
         # Define the four required variables in a dictionary
         required_vars = {
             "AZURE_OPENAI_KEY": self.AZURE_OPENAI_KEY,
-            "AZURE_OPENAI_ENDPOINT": self.AZURE_OPENAI_ENDPOINT,
+            "AZURE_OPENAI_API_ENDPOINT": self.AZURE_OPENAI_API_ENDPOINT,
             "AZURE_OPENAI_API_VERSION": self.AZURE_OPENAI_API_VERSION,
-            "AZURE_OPENAI_CHAT_DEPLOYMENT_ID": self.AZURE_OPENAI_CHAT_DEPLOYMENT_ID,
+            "AZURE_AOAI_CHAT_MODEL_NAME_DEPLOYMENT_ID": self.AZURE_AOAI_CHAT_MODEL_NAME_DEPLOYMENT_ID,
         }
 
         # Collect any that are missing or empty
@@ -186,9 +186,9 @@ class ChatAgent:
             kernel.add_service(
                 AzureChatCompletion(
                     service_id=service_id,
-                    deployment_name=self.AZURE_OPENAI_CHAT_DEPLOYMENT_ID,
+                    deployment_name=self.AZURE_AOAI_CHAT_MODEL_NAME_DEPLOYMENT_ID,
                     api_key=self.AZURE_OPENAI_KEY,
-                    endpoint=self.AZURE_OPENAI_ENDPOINT,
+                    endpoint=self.AZURE_OPENAI_API_ENDPOINT,
                     api_version=self.AZURE_OPENAI_API_VERSION,
                 )
             )
