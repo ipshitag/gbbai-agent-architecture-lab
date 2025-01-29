@@ -3,7 +3,7 @@ import logging
 from typing import Annotated, List, Dict, Any
 from semantic_kernel.functions import kernel_function
 from utils.ml_logging import get_logger
-from src.aoai.aoai_helper import AzureOpenAIManager
+from src.aoai.azure_openai import AzureOpenAIManager
 from semantic_kernel.utils.logging import setup_logging
 
 # Set up logging
@@ -34,9 +34,9 @@ class AIQueryClassificationPlugin:
         self.prompt_manager = prompt_manager
 
         try:
-            azure_openai_chat_deployment_id = os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT_ID")
+            azure_openai_chat_deployment_id = os.getenv("AZURE_AOAI_CHAT_MODEL_NAME_DEPLOYMENT_ID")
             azure_openai_key = os.getenv("AZURE_OPENAI_KEY")
-            azure_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
+            azure_endpoint = os.getenv("AZURE_OPENAI_API_ENDPOINT")
 
             if not all([azure_openai_chat_deployment_id, azure_openai_key, azure_endpoint]):
                 raise ValueError("One or more environment variables for OpenAI are missing.")

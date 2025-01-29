@@ -111,18 +111,18 @@ class Agent(ChatCompletionAgent):
         api_version = os.getenv("AZURE_OPENAI_API_VERSION")
 
         try:
-            # if not all([deployment_name, api_key, endpoint, api_version]):
-            #     missing_vars = [
-            #         var_name
-            #         for var_name, var_value in {
-            #             "AZURE_AOAI_CHAT_MODEL_NAME_DEPLOYMENT_ID": deployment_name,
-            #             "AZURE_OPENAI_KEY": api_key,
-            #             "AZURE_OPENAI_API_ENDPOINT": endpoint,
-            #             "AZURE_OPENAI_API_VERSION": api_version,
-            #         }.items()
-            #         if not var_value
-            #     ]
-            #     raise ValueError(f"Missing environment variables: {', '.join(missing_vars)}")
+            if not all([deployment_name, api_key, endpoint, api_version]):
+                missing_vars = [
+                    var_name
+                    for var_name, var_value in {
+                        "AZURE_AOAI_CHAT_MODEL_NAME_DEPLOYMENT_ID": deployment_name,
+                        "AZURE_OPENAI_KEY": api_key,
+                        "AZURE_OPENAI_API_ENDPOINT": endpoint,
+                        "AZURE_OPENAI_API_VERSION": api_version,
+                    }.items()
+                    if not var_value
+                ]
+                raise ValueError(f"Missing environment variables: {', '.join(missing_vars)}")
 
             kernel = Kernel()
             kernel.add_service(AzureChatCompletion(

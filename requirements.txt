@@ -15,3 +15,8 @@ biopython
 tenacity
 azure-ai-projects
 azure-identity
+matplotlib
+pandas
+seaborn
+azure-cosmos==4.7.0 
+azure-search-documents==11.6.0b5
