@@ -18,12 +18,14 @@ This repository is designed to:
 Follow these steps to set up your environment and start building with AI agents:
 
 1. **📋 Environment Setup**: Begin with the `00-set-up-env.ipynb` notebook to configure your environment and dependencies.
-2. **🛠 Building Single Agents**: Understand the foundations of single-agent architecturesand building `Managed` Agent as aserviie in azure AI servicie with the `01-building-single-agents.ipynb`
+2. **🛠 Building Single Agents**: Understand the foundations of single-agent architecturesand building `Managed` Agent as aserviie in azure AI servicie with the `01-single-agent-with-azure-ai-agents.ipynb`
 4. **📚 Introduction to Semantic Kernel**: Learn about Semantic Kernel and its role in orchestration with `02-frameworks-intro-to-semantic-kernel.ipynb`.
 3. **🔍 Exploring Autogen Frameworks**: Dive into Autogen with two detailed notebooks:
     - `03-frameworks-intro-to-autogen-v1.ipynb`
-    - `03b-frameworks-intro-to-autogen-v2.ipynb`
+    - `03b-frameworks-intro-to-autogen-v2.ipynb` (TODO)
 5. **🌐 Multi-Agent Architectures**: Explore advanced patterns and examples of multi-agent systems in `04-multi-agent-architectures-and-samples.ipynb`.
+    - `04-multi-agent-architectures-with-sk.ipynb` (Experimental) https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/?pivots=programming-language-csharp
+    - `05-multi-agent-architectures-with-azureai-agents-service.ipynb` (TODO)
 
 > **Note**: Before getting started, if this is your first time dealing with or conducting experiments on agent-based systems, please refer to the `AGENTS-FAQ.md` file for basic `auto` Q&A session.
 
