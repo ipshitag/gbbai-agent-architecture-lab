@@ -1,6 +1,8 @@
 # 🤖  AI Agentic Lab: Exploring Single and Multi-Agent Architectures
 
-Welcome to the **Intro to Agentic Architectures Lab**! This is your go-to space for exploring, designing, and implementing agent-based AI systems in Azure. Our mission is to help you understand and build single-agent systems, foundational orchestration frameworks, and advanced multi-agent strategies. We leverage the power of Azure and leading AI frameworks like Autogen and Semantic Kernel to provide you with the best resources and tools for building agentic designs.
+Welcome to the **Intro to Agentic Architectures Lab**! This is your go-to space for exploring, designing, and implementing agent-based AI systems in Azure. Our mission is to help you understand and build single-agent systems, foundational orchestration frameworks, and advanced multi-agent strategies. We leverage the power of Azure Foundry (Azure AI services) and leading AI frameworks like Autogen and Semantic Kernel to provide you with the best resources and tools for building agentic designs.
+
+**Let’s build the future of AI, one agent at a time! 🚀**
 
 ## 🌟 Project Overview
 This repository is designed to:
@@ -15,32 +17,37 @@ This repository is designed to:
 
 
 ## 🚀 Getting Started
-Follow these steps to set up your environment and start building with AI agents:
+Are you ready to dive into developing Agentic AI systems? 
 
 1. **📋 Environment Setup**: Begin with the `00-set-up-env.ipynb` notebook to configure your environment and dependencies.
-2. **🛠 Building Single Agents**: Understand the foundations of single-agent architecturesand building `Managed` Agent as aserviie in azure AI servicie with the `01-single-agent-with-azure-ai-agents.ipynb`
-4. **📚 Introduction to Semantic Kernel**: Learn about Semantic Kernel and its role in orchestration with `02-frameworks-intro-to-semantic-kernel.ipynb`.
-3. **🔍 Exploring Autogen Frameworks**: Dive into Autogen with two detailed notebooks:
-    - `03-frameworks-intro-to-autogen-v1.ipynb`
-    - `03b-frameworks-intro-to-autogen-v2.ipynb` (TODO)
-5. **🌐 Multi-Agent Architectures**: Explore advanced patterns and examples of multi-agent systems in `04-multi-agent-architectures-and-samples.ipynb`.
-    - `04-multi-agent-architectures-with-sk.ipynb` (Experimental) https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/?pivots=programming-language-csharp
-    - `05-multi-agent-architectures-with-azureai-agents-service.ipynb` (TODO)
 
-> **Note**: Before getting started, if this is your first time dealing with or conducting experiments on agent-based systems, please refer to the `AGENTS-FAQ.md` file for basic `auto` Q&A session.
+    > **Note**: Before getting started, if this is your first time dealing with agentic systems, please refer to the `AGENTS-FAQ.md` file for basic `auto` Q&A session.
+
+2. **🛠 Building Single Agents with Azure AI agent Service**: Understand the foundations of single-agent architecturesand building `Managed agent micro-services`:
+    - `01-single-agent-with-azure-ai-agents.ipynb`
+
+3. **📚 Introduction to Semantic Kernel Framework**: Learn about Semantic Kernel and its role in orchestration with: 
+    - `02-frameworks-intro-to-semantic-kernel.ipynb`.
+
+4. **🔍 Exploring Autogen Framework**: Dive into Autogen:
+    > In January 2025, AutoGen released its new generation v0.4—a significant evolution from version 0.2.  
+    > No stress—review Notebook 03 and then proceed to Notebook 03b to understand why the new design is the `event`we needed.
+    - `03-frameworks-intro-to-autogen-v0.2.ipynb`
+    - `03b-frameworks-intro-to-autogen-v0.4.ipynb`
+
+5. **🌐 Learn how to build Multi-Agent Architectures**: Explore advanced patterns and examples of multi-agent systems in:
+    - `04-multi-agent-architectures-with-sk.ipynb`
+    - `05-multi-agent-architectures-with-azureai-agents-service.ipynb`
 
 ## 📖 Upcoming Features
 
 We are committed to expanding this lab with more resources, including:
-- More advanced use cases for multi-agent orchestration.
+- More advanced use cases for multi-agent.
 - Tools and utilities for debugging and optimizing agent performance.
 - Event-driven architecture samples to demonstrate dynamic and responsive agent interactions.
+- Integration of MaS with M365 ecosystem.
 
 Stay tuned as we continue to explore the exciting world of AI agents!
-
-## 💬 Feedback and Contributions
-
-We welcome your feedback and contributions! If you have ideas to improve this lab or add new resources, please feel free to open an issue or submit a pull request. All issues and pull requests are well-documented and will be thoroughly reviewed and approved by the maintainer of the repository.
 
 ## 📚 Resources
 
@@ -51,4 +58,7 @@ Explore the following resources for hands-on guides, comprehensive documentation
 - **[AutoGen Documentation](https://github.com/microsoft/autogen)**: Comprehensive guides and API references for AutoGen.
 - **[Semantic Kernel Documentation](https://learn.microsoft.com/en-us/semantic-kernel/overview/)**: Detailed documentation on Semantic Kernel's features and capabilities.
 
-**Let’s build the future of AI, one agent at a time! 🚀**
+
+## 💬 Feedback and Contributions
+
+We welcome your feedback and contributions! If you have ideas to improve this lab or add new resources, please feel free to open an issue or submit a pull request. All issues and pull requests are well-documented and will be thoroughly reviewed and approved by the maintainer of the repository.
