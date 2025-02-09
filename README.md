@@ -20,9 +20,9 @@ Welcome to the **Agentic System Design Lab**! This is your go-to space for explo
 
 ## 🤖 Building Agentic Systems in Azure
 
-In today's fast-evolving Agentic AI landscape, staying ahead means embracing rapid experimentation. Our approach is to keep it smple and begins with building robust, scalable single agents using the **Azure AI Agent Service**. These production-ready agents come equipped with integrated tools, persistent memory, traceability, and isolated execution—ensuring a solid foundation before we scale up.
+In today's fast-evolving Agentic AI landscape, staying ahead means embracing rapid experimentation. Our approach in ths repo is to keep it simple and to the point, starting with the development of robust, scalable **enterprise single agents** using the Azure AI Agent Service. These production-ready agents come equipped with integrated tools, persistent memory, traceability, and isolated execution—providing a solid foundation before scaling up.
 
-Seamless communication among agents is equally crucial. Just as effective conversation drives human collaboration, real-time event exchange between agents unlocks their full potential. By leveraging frameworks like **AutoGen** and **Semantic Kernel**—or even crafting your own—we establish an event-driven architecture that ties everything together. To simplify:
+Then, of course, we'll tackle communication patterns between single agents. Just as clear conversation drives human collaboration, real-time event exchange between agents unlocks their full potential as a cohesive system. By leveraging frameworks like **AutoGen** and **Semantic Kernel**—or even crafting your own— you can establish an event-driven architecture that seamlessly ties everything together (single-agents) to build multi-agent systems.
 
 ```text
 Multi-Agent Architecture = Σ (Production-Ready Single Agents [tools, memory, traceability, isolation]) + Preferred Framework (e.g., Semantic Kernel, AutoGen)
