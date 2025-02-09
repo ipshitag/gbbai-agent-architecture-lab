@@ -91,6 +91,3 @@ While all three are Microsoft technologies designed to facilitate AI agent devel
 - **AutoGen**: An open-source research-oriented framework that simplifies the creation of multi-agent systems by providing tools for event-driven collaboration among agents. It is designed to explore advanced AI concepts and is ideal for experimental and research purposes.
 - **Semantic Kernel (SK)**: An open-source SDK ready for production use, enabling the development of single AI agents equipped with tools to perform tasks, integrate existing code, and facilitate intelligent decision-making. It supports the creation of robust and scalable AI solutions.
 - **Azure AI Agent Service**: A fully managed service offered by Azure to build, deploy, and scale AI agents. It provides enterprise-grade tools and services, supporting single-agent architectures, and ensures seamless integration and management in a cloud-native environment.
-
-### Need More Help?
-Feel free to explore the main repository or open an issue for additional guidance. Agents are here to stay—so let’s build something amazing together! main repository or open an issue for additional guidance. Agents are here to stay—so let’s build something amazing together!

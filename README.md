@@ -35,16 +35,17 @@ Are you ready to dive into developing Agentic AI systems?
     - `03-frameworks-intro-to-autogen-v0.2.ipynb`
     - `03b-frameworks-intro-to-autogen-v0.4.ipynb`
 
-5. **🌐 Learn how to build Multi-Agent Architectures**: Explore advanced patterns and examples of multi-agent systems in:
-    - `04-multi-agent-architectures-with-sk.ipynb`
-    - `05-multi-agent-architectures-with-azureai-agents-service.ipynb`
+5. **🌐 Learn how to build Multi-Agent Architectures**: Explore advanced patterns and examples of multi-agent systems in:\
+    > Caution: SK Agentic framework is in `Experimental` phase
+    - `04-multi-agent-architectures-with-sk-agentic-framework.ipynb`
+    - `05-multi-agent-architectures-with-azure-ai-agents-service-and-sk-autogen.ipynb`
 
 ## 📖 Upcoming Features
 
 We are committed to expanding this lab with more resources, including:
 - More advanced use cases for multi-agent.
 - Tools and utilities for debugging and optimizing agent performance.
-- Event-driven architecture samples to demonstrate dynamic and responsive agent interactions.
+- End-to-end event-driven architecture samples to demonstrate dynamic and responsive agent interactions in multi-agent scenarios.
 - Integration of MaS with M365 ecosystem.
 
 Stay tuned as we continue to explore the exciting world of AI agents!
