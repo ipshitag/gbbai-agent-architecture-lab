@@ -1,3 +1,4 @@
+# WIP
 import os
 import logging
 from typing import Annotated
@@ -6,6 +7,7 @@ from semantic_kernel.functions import kernel_function
 from utils.ml_logging import get_logger
 from src.aoai.azure_openai import AzureOpenAIManager
 from semantic_kernel.utils.logging import setup_logging
+from src.prompts.prompt_manager import PromptManager
 
 # Set up logging
 setup_logging()
@@ -32,7 +34,8 @@ class AIQueryFormulationPlugin:
             level=logging.DEBUG,
             tracing_enabled=TRACING_CLOUD_ENABLED
         )
-        self.prompt_manager = prompt_manager
+        if prompt_manager is None:
+            self.prompt_manager = PromptManager()
 
         try:
             azure_openai_chat_deployment_id = os.getenv("AZURE_AOAI_CHAT_MODEL_NAME_DEPLOYMENT_ID")
@@ -130,14 +133,14 @@ class AIQueryFormulationPlugin:
                 temperature=0.7
             )
 
-            llm_reply = response["response"].strip()
+            llm_reply = response["response"]
 
-            if not llm_reply.startswith("{"):
-                llm_reply = f'{{"optimized_query":"{llm_reply}"}}'
+            # if not llm_reply.startswith("{"):
+            #     llm_reply = f'{{"optimized_query":"{llm_reply}"}}'
 
-            verified_json = self.verify_json_structure(llm_reply)
-            self.logger.info(f"Generated expanded query: {verified_json}")
-            return verified_json
+            # verified_json = self.verify_json_structure(llm_reply)
+            self.logger.info(f"Generated expanded query: {llm_reply}")
+            return llm_reply
 
         except Exception as e:
             self.logger.error(f"Error creating expanded query: {e}")

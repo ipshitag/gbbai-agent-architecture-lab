@@ -1,3 +1,5 @@
+# WIP
+
 import os
 import logging
 import json
@@ -5,6 +7,7 @@ from typing import Annotated, List, Dict, Any
 from semantic_kernel.functions import kernel_function
 from utils.ml_logging import get_logger
 from src.aoai.azure_openai import AzureOpenAIManager
+from src.prompts.prompt_manager import PromptManager
 from semantic_kernel.utils.logging import setup_logging
 
 # Set up logging
@@ -32,7 +35,8 @@ class AIPolicyEvaluationPlugin:
             level=logging.DEBUG,
             tracing_enabled=TRACING_CLOUD_ENABLED
         )
-        self.prompt_manager = prompt_manager
+        if prompt_manager is None:
+            self.prompt_manager = PromptManager()
 
         try:
             azure_openai_chat_deployment_id = os.getenv("AZURE_AOAI_CHAT_MODEL_NAME_DEPLOYMENT_ID")
@@ -121,28 +125,27 @@ class AIPolicyEvaluationPlugin:
                 temperature=0.2
             )
 
-            llm_reply = response["response"].strip()
+            llm_reply = response["response"]
 
-            verified_json = self.verify_json_structure(llm_reply)
-            self.logger.info(f"Evaluation result: {verified_json}")
-            return verified_json
+            self.logger.info(f"Evaluation result: {llm_reply}")
+            return llm_reply
 
         except Exception as e:
             self.logger.error(f"Error evaluating policies: {e}")
             # Fallback to a minimal JSON with "retry" = true
             return {"policies": [], "reasoning": ["Error during evaluation"], "retry": True}
 
-    def verify_json_structure(self, json_string: str) -> dict:
-        """
-        Verify the JSON structure to ensure it contains the 'policies', 'reasoning', and 'retry' keys.
+    # def verify_json_structure(self, json_string: str) -> dict:
+    #     """
+    #     Verify the JSON structure to ensure it contains the 'policies', 'reasoning', and 'retry' keys.
         
-        :param json_string: The JSON string to verify.
-        :return: A correctly structured JSON object.
-        """
-        try:
-            json_obj = json.loads(json_string)
-            if not all(key in json_obj for key in ["policies", "reasoning", "retry"]):
-                json_obj = {"policies": [], "reasoning": ["Invalid JSON structure"], "retry": True}
-            return json_obj
-        except json.JSONDecodeError:
-            return {"policies": [], "reasoning": ["Invalid JSON structure"], "retry": True}
+    #     :param json_string: The JSON string to verify.
+    #     :return: A correctly structured JSON object.
+    #     """
+    #     try:
+    #         json_obj = json.loads(json_string)
+    #         if not all(key in json_obj for key in ["policies", "reasoning", "retry"]):
+    #             json_obj = {"policies": [], "reasoning": ["Invalid JSON structure"], "retry": True}
+    #         return json_obj
+    #     except json.JSONDecodeError:
+    #         return {"policies": [], "reasoning": ["Invalid JSON structure"], "retry": True}

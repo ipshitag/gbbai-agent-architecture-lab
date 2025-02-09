@@ -1,6 +1,5 @@
 """
 `azure_openai.py` is a module for managing interactions with the Azure OpenAI API within our application.
-
 """
 import base64
 import json
@@ -53,7 +52,7 @@ class AzureOpenAIManager:
 
         :param api_key: The Azure OpenAI Key. If not provided, it will be fetched from the environment variable "AZURE_OPENAI_KEY".
         :param api_version: The Azure OpenAI API Version. If not provided, it will be fetched from the environment variable "AZURE_OPENAI_API_VERSION" or default to "2023-05-15".
-        :param azure_endpoint: The Azure OpenAI API Endpoint. If not provided, it will be fetched from the environment variable "AZURE_OPENAI_ENDPOINT".
+        :param azure_endpoint: The Azure OpenAI API Endpoint. If not provided, it will be fetched from the environment variable "AZURE_OPENAI_API_ENDPOINT".
         :param completion_model_name: The Completion Model Deployment ID. If not provided, it will be fetched from the environment variable "AZURE_AOAI_COMPLETION_MODEL_DEPLOYMENT_ID".
         :param chat_model_name: The Chat Model Name. If not provided, it will be fetched from the environment variable "AZURE_AOAI_CHAT_MODEL_NAME".
         :param embedding_model_name: The Embedding Model Deployment ID. If not provided, it will be fetched from the environment variable "AZURE_AOAI_EMBEDDING_DEPLOYMENT_ID".
@@ -64,12 +63,12 @@ class AzureOpenAIManager:
         self.api_version = (
             api_version or os.getenv("AZURE_OPENAI_API_VERSION") or "2024-02-01"
         )
-        self.azure_endpoint = azure_endpoint or os.getenv("AZURE_OPENAI_ENDPOINT")
+        self.azure_endpoint = azure_endpoint or os.getenv("AZURE_OPENAI_API_ENDPOINT")
         self.completion_model_name = completion_model_name or os.getenv(
             "AZURE_AOAI_COMPLETION_MODEL_DEPLOYMENT_ID"
         )
         self.chat_model_name = chat_model_name or os.getenv(
-            "AZURE_OPENAI_CHAT_DEPLOYMENT_ID"
+            "AZURE_AOAI_CHAT_MODEL_NAME_DEPLOYMENT_ID"
         )
         self.embedding_model_name = embedding_model_name or os.getenv(
             "AZURE_OPENAI_EMBEDDING_DEPLOYMENT"

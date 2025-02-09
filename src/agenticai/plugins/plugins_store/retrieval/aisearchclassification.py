@@ -1,3 +1,4 @@
+# WIP
 import os
 import logging
 from typing import Annotated, List, Dict, Any
@@ -5,6 +6,8 @@ from semantic_kernel.functions import kernel_function
 from utils.ml_logging import get_logger
 from src.aoai.azure_openai import AzureOpenAIManager
 from semantic_kernel.utils.logging import setup_logging
+from src.prompts.prompt_manager import PromptManager
+
 
 # Set up logging
 setup_logging()
@@ -31,7 +34,10 @@ class AIQueryClassificationPlugin:
             level=logging.DEBUG,
             tracing_enabled=TRACING_CLOUD_ENABLED
         )
-        self.prompt_manager = prompt_manager
+        
+        if prompt_manager is None:
+            self.prompt_manager = PromptManager()
+
 
         try:
             azure_openai_chat_deployment_id = os.getenv("AZURE_AOAI_CHAT_MODEL_NAME_DEPLOYMENT_ID")
@@ -77,7 +83,7 @@ class AIQueryClassificationPlugin:
         try:
             self.logger.info(f"Classifying query: {query_text}")
             system_prompt = self.prompt_manager.get_prompt(
-                "query_classifier_system_prompt.jinja"
+                "query_classificator_system_prompt.jinja"
             )
             user_prompt = self.prompt_manager.create_prompt_query_classifier_user(
                 query=query_text
@@ -92,7 +98,7 @@ class AIQueryClassificationPlugin:
                 temperature=0  # ensures more deterministic output
             )
 
-            classification = response["response"].strip().lower()
+            classification = response["response"]
 
             if classification not in {"keyword", "semantic"}:
                 self.logger.warning(f"Invalid classification: '{classification}', defaulting to 'semantic'.")

@@ -57,7 +57,7 @@ class PromptManager:
                  on classifying the query as 'keyword' or 'semantic'.
         """
         return self.get_prompt(
-            "query_classifier_user_prompt.jinja",
+            "query_classificator_user_prompt.jinja",
             query=query,
         )
 

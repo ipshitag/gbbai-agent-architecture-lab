@@ -168,7 +168,6 @@ class AzureSearchPlugin:
                 semantic_configuration_name="my-semantic-config",
                 query_caption=QueryCaptionType.EXTRACTIVE,
                 query_answer=QueryAnswerType.EXTRACTIVE,
-                filter="",
                 top=top
             )
             extracted_results = self._format_azure_search_results(results)

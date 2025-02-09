@@ -8,6 +8,8 @@ from semantic_kernel.connectors.ai.open_ai import AzureChatCompletion
 from semantic_kernel.connectors.ai.prompt_execution_settings import PromptExecutionSettings
 from semantic_kernel.connectors.ai.function_choice_behavior import FunctionChoiceBehavior
 from semantic_kernel.connectors.ai.open_ai import OpenAIChatPromptExecutionSettings
+from semantic_kernel.functions.kernel_arguments import KernelArguments
+
 
 from src.agenticai.skills import Skills
 from utils.ml_logging import get_logger
@@ -72,7 +74,7 @@ class Agent(ChatCompletionAgent):
             id=id,
             description=description,
             instructions=instructions,
-            execution_settings=updated_execution_settings,
+            arguments=KernelArguments(settings=updated_execution_settings),
         )
 
         self.skills = skills

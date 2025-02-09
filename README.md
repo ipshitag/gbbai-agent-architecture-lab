@@ -2,7 +2,7 @@
 
 # 🤖  AI Agentic Lab: Build Single and Multi-Agent Systems in Azure
 
-Welcome to the **Agentic System Design Lab**! This is your go-to space for exploring, designing, and implementing agent-based AI systems in Azure. Our mission is to help you understand and build single-agent systems, foundational orchestration frameworks, and advanced multi-agent strategies. We leverage the power of [**Azure Foundry (Azure AI Agents Service)**](https://azure.microsoft.com/en-us/products/ai-foundry/?msockid=0b24a995eaca6e7d3c1dbc1beb7e6fa8#Use-cases-and-Capabilities) and leading AI frameworks like [**Autogen**](https://microsoft.github.io/autogen/0.2/docs/Getting-Started/) and [**Semantic Kernel**](https://learn.microsoft.com/en-us/semantic-kernel/overview/) to provide you with the best resources and tools for building agentic designs.
+Welcome to the **Agentic System Design Lab**! This is your go-to space for exploring, designing, and implementing agent-based AI systems in Azure. Our mission is to help you understand and build single-agent systems, foundational orchestration frameworks, and advanced multi-agent strategies. We leverage the power of [**Azure Foundry (Azure AI Agents Service)**](https://azure.microsoft.com/en-us/products/ai-foundry/?msockid=0b24a995eaca6e7d3c1dbc1beb7e6fa8#Use-cases-and-Capabilities) and leading AI frameworks like [**Autogen**](https://microsoft.github.io/autogen/0.2/docs/Getting-Started/) and [**Semantic Kernel**](https://learn.microsoft.com/en-us/semantic-kernel/overview/) to provide you with the best resources and tools for building enterprise agentic designs patterns. Our focus is on hands-on learning—empowering you to learn the fundamentals trougth the labs and explore the art of the possible through real-world use cases.
 
 **Let’s build the future of AI, one agent at a time! 🚀**
 
@@ -24,10 +24,9 @@ In today's fast-evolving Agentic AI landscape, staying ahead means embracing rap
 
 Seamless communication among agents is equally crucial. Just as effective conversation drives human collaboration, real-time event exchange between agents unlocks their full potential. By leveraging frameworks like **AutoGen** and **Semantic Kernel**—or even crafting your own—we establish an event-driven architecture that ties everything together. To simplify:
 
-$$
-\textbf{Multi-Agent Architecture} = \Sigma \Big( \text{Production-Ready Single Agents [tools, memory, traceability, isolation]} \Big) 
-+ \text{Preferred Framework (e.g., Semantic Kernel, AutoGen)}
-$$
+```text
+Multi-Agent Architecture = Σ (Production-Ready Single Agents [tools, memory, traceability, isolation]) + Preferred Framework (e.g., Semantic Kernel, AutoGen)
+```
 
 **Breaking It Down**
 
