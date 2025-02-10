@@ -1,12 +1,15 @@
-from autogen import ConversableAgent, GroupChat, GroupChatManager
-import yaml
-from typing import Dict, List, Optional, Union, Callable, Literal, Any
 import os
+from typing import Any, Callable, Dict, List, Literal, Optional, Union
+
 import streamlit as st
-from utils.ml_logging import get_logger
+import yaml
+from autogen import ConversableAgent, GroupChat, GroupChatManager
 from streamlit import container
 
+from utils.ml_logging import get_logger
+
 logger = get_logger()
+
 
 def initialize_session_state(vars: List[str], initial_values: Dict[str, Any]) -> None:
     """
@@ -59,7 +62,7 @@ def get_llm_config(
     azure_openai_key: Optional[str] = None,
     azure_aoai_chat_model_name_deployment_id: Optional[str] = None,
     azure_openai_api_endpoint: Optional[str] = None,
-    azure_openai_api_version: Optional[str] = None
+    azure_openai_api_version: Optional[str] = None,
 ) -> Dict[str, List[Dict[str, str]]]:
     """
     Generate a configuration list dictionary for the LLM from provided parameters or environment variables.
@@ -74,9 +77,16 @@ def get_llm_config(
         Dict[str, List[Dict[str, str]]]: A dictionary containing the configuration list.
     """
     azure_openai_key = azure_openai_key or os.getenv("AZURE_OPENAI_KEY")
-    azure_aoai_chat_model_name_deployment_id = azure_aoai_chat_model_name_deployment_id or os.getenv("AZURE_AOAI_CHAT_MODEL_NAME_DEPLOYMENT_ID")
-    azure_openai_api_endpoint = azure_openai_api_endpoint or os.getenv("AZURE_OPENAI_API_ENDPOINT")
-    azure_openai_api_version = azure_openai_api_version or os.getenv("AZURE_OPENAI_API_VERSION")
+    azure_aoai_chat_model_name_deployment_id = (
+        azure_aoai_chat_model_name_deployment_id
+        or os.getenv("AZURE_AOAI_CHAT_MODEL_NAME_DEPLOYMENT_ID")
+    )
+    azure_openai_api_endpoint = azure_openai_api_endpoint or os.getenv(
+        "AZURE_OPENAI_API_ENDPOINT"
+    )
+    azure_openai_api_version = azure_openai_api_version or os.getenv(
+        "AZURE_OPENAI_API_VERSION"
+    )
 
     return {
         "config_list": [
@@ -85,14 +95,17 @@ def get_llm_config(
                 "api_type": "azure",
                 "api_key": azure_openai_key,
                 "base_url": azure_openai_api_endpoint,
-                "api_version": azure_openai_api_version
+                "api_version": azure_openai_api_version,
             }
         ]
     }
 
-from typing import Optional, Union, Callable, Dict, List
-from typing_extensions import Literal
+
+from typing import Callable, Dict, List, Optional, Union
+
 import streamlit as st
+from typing_extensions import Literal
+
 
 class StreamlitConversableAgent(ConversableAgent):
     def __init__(
@@ -108,7 +121,7 @@ class StreamlitConversableAgent(ConversableAgent):
         default_auto_reply: Union[str, Dict] = "",
         description: Optional[str] = None,
         chat_messages: Optional[Dict[ConversableAgent, List[Dict]]] = None,
-        avatar: str = '🤖',
+        avatar: str = "🤖",
         verbose: bool = True,
     ):
         """
@@ -146,55 +159,57 @@ class StreamlitConversableAgent(ConversableAgent):
         )
 
     def _process_received_message(self, message, sender, silent):
-            """
-            Process received message and log it in Streamlit chat interface.
-        
-            Args:
-                message (str): The message content.
-                sender (ConversableAgent): The sender of the message.
-                silent (bool, optional): Whether the message should be processed silently. Defaults to the instance's silent attribute.
-            """
-        
-            if 'chat_history' not in st.session_state:
-                st.session_state.chat_history = []
-    
-            st.session_state.chat_history.append({'role': sender.name, 'content': message})
-            print(f"Updated chat history: {st.session_state.chat_history}")
+        """
+        Process received message and log it in Streamlit chat interface.
 
-            if self.verbose:
-                self._display_message(sender, message)
-        
-            return super()._process_received_message(message, sender, silent)
-    
+        Args:
+            message (str): The message content.
+            sender (ConversableAgent): The sender of the message.
+            silent (bool, optional): Whether the message should be processed silently. Defaults to the instance's silent attribute.
+        """
+
+        if "chat_history" not in st.session_state:
+            st.session_state.chat_history = []
+
+        st.session_state.chat_history.append({"role": sender.name, "content": message})
+        print(f"Updated chat history: {st.session_state.chat_history}")
+
+        if self.verbose:
+            self._display_message(sender, message)
+
+        return super()._process_received_message(message, sender, silent)
+
     def _display_message(self, sender, message):
-            """
-            Helper function to display a message in the chat interface.
-        
-            Args:
-                sender (ConversableAgent): The sender of the message.
-                message (str): The message content.
-            """
-            message_html = f"<div style='padding: 10px; border-radius: 5px;'>{message}</div>"
-            print(f"Displaying message: {message_html}")
+        """
+        Helper function to display a message in the chat interface.
 
-            agent_name_to_emoji = {
-                "User": "👤",
-                "MedicalResearchPlanner": "🧑🏿‍💼",
-                "FinalMedicalReviewer": "👨🏽‍⚕️",
-                "MedicalResearcher": "👩‍⚕️"
-            }
+        Args:
+            sender (ConversableAgent): The sender of the message.
+            message (str): The message content.
+        """
+        message_html = (
+            f"<div style='padding: 10px; border-radius: 5px;'>{message}</div>"
+        )
+        print(f"Displaying message: {message_html}")
 
-            if message["name"] in agent_name_to_emoji:
-                avatar = agent_name_to_emoji[message["name"]]
-            else:
-                avatar = "❓"  
+        agent_name_to_emoji = {
+            "User": "👤",
+            "MedicalResearchPlanner": "🧑🏿‍💼",
+            "FinalMedicalReviewer": "👨🏽‍⚕️",
+            "MedicalResearcher": "👩‍⚕️",
+        }
 
-            with st.chat_message(self.name, avatar=self.avatar):
-                formatted_message = f"**{self.name}**\n\n{message['content']}"
-                st.markdown(formatted_message)
+        if message["name"] in agent_name_to_emoji:
+            avatar = agent_name_to_emoji[message["name"]]
+        else:
+            avatar = "❓"
+
+        with st.chat_message(self.name, avatar=self.avatar):
+            formatted_message = f"**{self.name}**\n\n{message['content']}"
+            st.markdown(formatted_message)
 
     @classmethod
-    def load_agent(cls, yaml_file: str) -> 'SuperConversableAgent':
+    def load_agent(cls, yaml_file: str) -> "SuperConversableAgent":
         """
         Load an agent configuration from a YAML file.
 
@@ -204,23 +219,28 @@ class StreamlitConversableAgent(ConversableAgent):
         Returns:
             TracableConversableAgent: An instance of TracableConversableAgent.
         """
-        with open(yaml_file, 'r') as file:
+        with open(yaml_file, "r") as file:
             config = yaml.safe_load(file)
 
-        llm_config = get_llm_config() if config.get('llm_config') == "default" else config.get('llm_config')
+        llm_config = (
+            get_llm_config()
+            if config.get("llm_config") == "default"
+            else config.get("llm_config")
+        )
 
         return cls(
-            name=config['name'],
-            system_message=config.get('system_message', "You are a helpful AI Assistant."),
-            is_termination_msg=config.get('is_termination_msg'),
-            max_consecutive_auto_reply=config.get('max_consecutive_auto_reply'),
-            human_input_mode=config.get('human_input_mode', "TERMINATE"),
-            function_map=config.get('function_map'),
-            code_execution_config=config.get('code_execution_config', False),
+            name=config["name"],
+            system_message=config.get(
+                "system_message", "You are a helpful AI Assistant."
+            ),
+            is_termination_msg=config.get("is_termination_msg"),
+            max_consecutive_auto_reply=config.get("max_consecutive_auto_reply"),
+            human_input_mode=config.get("human_input_mode", "TERMINATE"),
+            function_map=config.get("function_map"),
+            code_execution_config=config.get("code_execution_config", False),
             llm_config=llm_config,
-            default_auto_reply=config.get('default_auto_reply', ""),
-            description=config.get('description'),
-            chat_messages=config.get('chat_messages'),
-            avatar=config.get('avatar', '🤖')
+            default_auto_reply=config.get("default_auto_reply", ""),
+            description=config.get("description"),
+            chat_messages=config.get("chat_messages"),
+            avatar=config.get("avatar", "🤖"),
         )
-    

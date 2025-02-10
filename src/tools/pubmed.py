@@ -1,15 +1,18 @@
-import requests
-import xml.etree.ElementTree as ET
 import json
-import pandas as pd
-from typing import List, Dict, Any, Optional
-import fitz  # PyMuPDF
-from Bio import Entrez
 import time
-from tenacity import retry, wait_random_exponential, stop_after_attempt
+import xml.etree.ElementTree as ET
+from typing import Any, Dict, List, Optional
+
+import fitz  # PyMuPDF
+import pandas as pd
+import requests
+from Bio import Entrez
+from tenacity import retry, stop_after_attempt, wait_random_exponential
+
 from utils.ml_logging import get_logger
 
 logger = get_logger()
+
 
 class PubMedScraper:
     def __init__(self, email: str):
@@ -32,7 +35,7 @@ class PubMedScraper:
         datetype: Optional[str] = None,
         mindate: Optional[str] = None,
         maxdate: Optional[str] = None,
-        retstart: int = 0
+        retstart: int = 0,
     ) -> List[str]:
         """
         Fetch PubMed IDs based on the query.
@@ -55,7 +58,7 @@ class PubMedScraper:
             "retmax": max_results,
             "sort": sort,
             "retmode": "json",
-            "retstart": retstart
+            "retstart": retstart,
         }
 
         if field:
@@ -72,7 +75,7 @@ class PubMedScraper:
             logger.error(f"Failed to fetch PubMed IDs: {response.status_code}")
             raise ValueError(f"Error fetching PubMed IDs: {response.status_code}")
         data = response.json()
-        return data.get('esearchresult', {}).get('idlist', [])
+        return data.get("esearchresult", {}).get("idlist", [])
 
     def fetch_pubmed_articles(self, ids: List[str]) -> str:
         """
@@ -101,37 +104,51 @@ class PubMedScraper:
         for article in root.findall(".//PubmedArticle"):
             pmid = article.findtext(".//PMID", default="No PMID available")
             year = article.findtext(".//PubDate/Year", default="No Year available")
-            volume = article.findtext(".//JournalIssue/Volume", default="No Volume available")
-            issue = article.findtext(".//JournalIssue/Issue", default="No Issue available")
+            volume = article.findtext(
+                ".//JournalIssue/Volume", default="No Volume available"
+            )
+            issue = article.findtext(
+                ".//JournalIssue/Issue", default="No Issue available"
+            )
             citation = f"{year};{volume}({issue})"
 
             details = {
-                'pmid': pmid,
-                'title': article.findtext(".//ArticleTitle", default="No title available"),
-                'abstract': article.findtext(".//AbstractText", default="No abstract available"),
-                'authors': [
+                "pmid": pmid,
+                "title": article.findtext(
+                    ".//ArticleTitle", default="No title available"
+                ),
+                "abstract": article.findtext(
+                    ".//AbstractText", default="No abstract available"
+                ),
+                "authors": [
                     f"{author.findtext('ForeName', '')} {author.findtext('LastName', '')}".strip()
                     for author in article.findall(".//Author")
                 ],
-                'year': year,
-                'volume': volume,
-                'issue': issue,
-                'journal': article.findtext(".//Journal/Title", default="No journal available"),
-                'citation': citation,
-                'link': article.findtext(".//ArticleId[@IdType='doi']", default="No link available")
+                "year": year,
+                "volume": volume,
+                "issue": issue,
+                "journal": article.findtext(
+                    ".//Journal/Title", default="No journal available"
+                ),
+                "citation": citation,
+                "link": article.findtext(
+                    ".//ArticleId[@IdType='doi']", default="No link available"
+                ),
             }
-            if details['link'] and details['link'] != "No link available":
-                details['link'] = f"https://doi.org/{details['link']}"
+            if details["link"] and details["link"] != "No link available":
+                details["link"] = f"https://doi.org/{details['link']}"
 
             pmc_id = None
             for other_id in article.findall(".//ArticleIdList/ArticleId"):
-                if other_id.attrib.get('IdType') == 'pmc':
+                if other_id.attrib.get("IdType") == "pmc":
                     pmc_id = other_id.text
                     break
             if pmc_id:
-                details['pdf_link'] = f"https://www.ncbi.nlm.nih.gov/pmc/articles/{pmc_id}/pdf/"
+                details[
+                    "pdf_link"
+                ] = f"https://www.ncbi.nlm.nih.gov/pmc/articles/{pmc_id}/pdf/"
             else:
-                details['pdf_link'] = "No PDF link available"
+                details["pdf_link"] = "No PDF link available"
 
             articles.append(details)
         return articles
@@ -156,10 +173,10 @@ class PubMedScraper:
         try:
             response = requests.get(url, headers=self.headers)
             response.raise_for_status()
-            with open('temp_article.pdf', 'wb') as f:
+            with open("temp_article.pdf", "wb") as f:
                 f.write(response.content)
 
-            pdf_document = fitz.open('temp_article.pdf')
+            pdf_document = fitz.open("temp_article.pdf")
             text = ""
             for page in pdf_document:
                 text += page.get_text()
@@ -168,7 +185,9 @@ class PubMedScraper:
             logger.error(f"Error fetching PDF content: {e}")
             return f"Error fetching PDF content: {e}"
 
-    def add_article_content(self, articles: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def add_article_content(
+        self, articles: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
         """
         Add full article content to the articles.
 
@@ -176,13 +195,15 @@ class PubMedScraper:
         :return: List of articles with full content added.
         """
         for article in articles:
-            if 'pdf_link' in article and article['pdf_link'] != "No PDF link available":
-                article['full_content'] = self.fetch_pdf_content(article['pdf_link'])
+            if "pdf_link" in article and article["pdf_link"] != "No PDF link available":
+                article["full_content"] = self.fetch_pdf_content(article["pdf_link"])
             else:
-                article['full_content'] = "No full text link available"
+                article["full_content"] = "No full text link available"
         return articles
 
-    def json_to_csv(self, json_data: str, csv_file_path: Optional[str] = None) -> pd.DataFrame:
+    def json_to_csv(
+        self, json_data: str, csv_file_path: Optional[str] = None
+    ) -> pd.DataFrame:
         """
         Convert JSON data to a pandas DataFrame and optionally save as CSV.
 
@@ -192,8 +213,18 @@ class PubMedScraper:
         """
         articles = json.loads(json_data)
         columns = [
-            'pmid', 'title', 'abstract', 'authors', 'year', 'volume', 
-            'issue', 'journal', 'citation', 'link', 'pdf_link', 'full_content'
+            "pmid",
+            "title",
+            "abstract",
+            "authors",
+            "year",
+            "volume",
+            "issue",
+            "journal",
+            "citation",
+            "link",
+            "pdf_link",
+            "full_content",
         ]
         df = pd.DataFrame(articles, columns=columns)
         if csv_file_path:
@@ -210,7 +241,7 @@ class PubMedScraper:
         mindate: Optional[str] = None,
         maxdate: Optional[str] = None,
         retstart: int = 0,
-        csv_file_path: Optional[str] = None
+        csv_file_path: Optional[str] = None,
     ) -> pd.DataFrame:
         """
         Searches PubMed based on a query and exports the results to a pandas DataFrame.
@@ -228,7 +259,9 @@ class PubMedScraper:
         :raises ValueError: If no articles are found.
         """
         logger.info(f"Starting search with query: {query}")
-        pubmed_ids = self.fetch_pubmed_ids(query, max_results, field, sort, datetype, mindate, maxdate, retstart)
+        pubmed_ids = self.fetch_pubmed_ids(
+            query, max_results, field, sort, datetype, mindate, maxdate, retstart
+        )
 
         if not pubmed_ids:
             logger.warning("No articles found for the given query.")
@@ -239,6 +272,6 @@ class PubMedScraper:
         articles_with_content = self.add_article_content(articles)
         articles_json = self.articles_to_json(articles_with_content)
         df = self.json_to_csv(articles_json, csv_file_path)
-        
+
         logger.info(f"Search completed. Found {len(df)} articles.")
         return df

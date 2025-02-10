@@ -1,19 +1,22 @@
 # WIP
-import os
-import logging
-from typing import Annotated
 import json
+import logging
+import os
+from typing import Annotated
+
 from semantic_kernel.functions import kernel_function
-from utils.ml_logging import get_logger
-from src.aoai.azure_openai import AzureOpenAIManager
 from semantic_kernel.utils.logging import setup_logging
+
+from src.aoai.azure_openai import AzureOpenAIManager
 from src.prompts.prompt_manager import PromptManager
+from utils.ml_logging import get_logger
 
 # Set up logging
 setup_logging()
 logging.getLogger("kernel").setLevel(logging.DEBUG)
 
 TRACING_CLOUD_ENABLED = os.getenv("TRAINING_CLOUD_ENABLED") or False
+
 
 class AIQueryFormulationPlugin:
     """
@@ -32,18 +35,24 @@ class AIQueryFormulationPlugin:
         self.logger = get_logger(
             name="AIQueryFormulationPlugin",
             level=logging.DEBUG,
-            tracing_enabled=TRACING_CLOUD_ENABLED
+            tracing_enabled=TRACING_CLOUD_ENABLED,
         )
         if prompt_manager is None:
             self.prompt_manager = PromptManager()
 
         try:
-            azure_openai_chat_deployment_id = os.getenv("AZURE_AOAI_CHAT_MODEL_NAME_DEPLOYMENT_ID")
+            azure_openai_chat_deployment_id = os.getenv(
+                "AZURE_AOAI_CHAT_MODEL_NAME_DEPLOYMENT_ID"
+            )
             azure_openai_key = os.getenv("AZURE_OPENAI_KEY")
             azure_endpoint = os.getenv("AZURE_OPENAI_API_ENDPOINT")
 
-            if not all([azure_openai_chat_deployment_id, azure_openai_key, azure_endpoint]):
-                raise ValueError("One or more environment variables for OpenAI are missing.")
+            if not all(
+                [azure_openai_chat_deployment_id, azure_openai_key, azure_endpoint]
+            ):
+                raise ValueError(
+                    "One or more environment variables for OpenAI are missing."
+                )
 
             self.azure_openai_client = AzureOpenAIManager(
                 api_key=azure_openai_key,
@@ -83,10 +92,10 @@ class AIQueryFormulationPlugin:
         except Exception as e:
             self.logger.error(f"Initialization error: {e}")
             raise e
-        
+
     @kernel_function(
         name="generate_expanded_query",
-        description="Creates an optimized search query in JSON format using query expansion techniques."
+        description="Creates an optimized search query in JSON format using query expansion techniques.",
     )
     async def generate_expanded_query(
         self,
@@ -95,11 +104,14 @@ class AIQueryFormulationPlugin:
         code: Annotated[str, "Relevant Code (if any)"],
         dosage: Annotated[str, "Dosage or Plan"],
         duration: Annotated[str, "Treatment Duration"],
-        rationale: Annotated[str, "Clinical Rationale for Treatment"]
-    ) -> Annotated[dict, "A JSON object containing the 'optimized_query' for prior authorization searches."]:
+        rationale: Annotated[str, "Clinical Rationale for Treatment"],
+    ) -> Annotated[
+        dict,
+        "A JSON object containing the 'optimized_query' for prior authorization searches.",
+    ]:
         """
         Generate an expanded prior authorization search query JSON using the provided clinical details.
-        
+
         :param diagnosis: The diagnosis or medical justification.
         :param medication_or_procedure: The medication name or procedure.
         :param code: Relevant code (ICD-10, CPT, etc.), if any.
@@ -111,18 +123,22 @@ class AIQueryFormulationPlugin:
         try:
             self.logger.info("Creating expanded query for prior authorization...")
 
-            system_prompt = self.prompt_manager.get_prompt("formulator_system_prompt.jinja")
+            system_prompt = self.prompt_manager.get_prompt(
+                "formulator_system_prompt.jinja"
+            )
             user_prompt = self.prompt_manager.create_prompt_formulator_user(
                 diagnosis=diagnosis,
                 medication_or_procedure=medication_or_procedure,
                 code=code,
                 dosage=dosage,
                 duration=duration,
-                rationale=rationale
+                rationale=rationale,
             )
-    
+
             if not diagnosis.strip() or not medication_or_procedure.strip():
-                return {"optimized_query": "Need more information to construct the query."}
+                return {
+                    "optimized_query": "Need more information to construct the query."
+                }
 
             response = await self.azure_openai_client.generate_chat_response(
                 query=user_prompt,
@@ -130,7 +146,7 @@ class AIQueryFormulationPlugin:
                 conversation_history=[],
                 response_format="json_object",
                 max_tokens=1000,
-                temperature=0.7
+                temperature=0.7,
             )
 
             llm_reply = response["response"]
@@ -150,7 +166,7 @@ class AIQueryFormulationPlugin:
     def verify_json_structure(self, json_string: str) -> dict:
         """
         Verify the JSON structure to ensure it contains the 'optimized_query' key.
-        
+
         :param json_string: The JSON string to verify.
         :return: A correctly structured JSON object.
         """

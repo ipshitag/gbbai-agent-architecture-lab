@@ -1,5 +1,5 @@
 import os
-from typing import Any, List, Dict
+from typing import Any, Dict, List
 
 from jinja2 import Environment, FileSystemLoader
 from pydantic import BaseModel
@@ -21,8 +21,7 @@ class PromptManager:
         template_path = os.path.join(current_dir, template_dir)
 
         self.env = Environment(
-            loader=FileSystemLoader(searchpath=template_path),
-            autoescape=False
+            loader=FileSystemLoader(searchpath=template_path), autoescape=False
         )
 
         templates = self.env.list_templates()
@@ -44,16 +43,16 @@ class PromptManager:
             return template.render(**kwargs)
         except Exception as e:
             raise ValueError(f"Error rendering template '{template_name}': {e}")
-        
+
     def create_prompt_query_classifier_user(self, query: str) -> str:
         """
         Create a user prompt for query classification.
 
         Args:
             query (str): The user query, e.g. "What is the process for prior authorization for Humira?"
-        
+
         Returns:
-            str: The rendered prompt (query_classifier_user_prompt.jinja) with instructions 
+            str: The rendered prompt (query_classifier_user_prompt.jinja) with instructions
                  on classifying the query as 'keyword' or 'semantic'.
         """
         return self.get_prompt(
@@ -82,7 +81,7 @@ class PromptManager:
             rationale (str): Clinical rationale or justification.
 
         Returns:
-            str: The rendered prompt (formulator_user_prompt.jinja) that guides how to 
+            str: The rendered prompt (formulator_user_prompt.jinja) that guides how to
                  construct an optimized search query with synonyms, related terms, etc.
         """
         return self.get_prompt(
@@ -96,25 +95,23 @@ class PromptManager:
         )
 
     def create_prompt_evaluator_user(
-        self,
-        query: str,
-        search_results: List[Dict[str, Any]]
+        self, query: str, search_results: List[Dict[str, Any]]
     ) -> str:
         """
         Create a user prompt for evaluating policy search results.
 
         Args:
-            query (str): The user's query regarding prior authorization (e.g. "What is 
+            query (str): The user's query regarding prior authorization (e.g. "What is
                          the prior authorization policy for Epidiolex for LGS?")
             search_results (List[Dict[str, Any]]): A list of retrieved policies, each containing:
                 - 'id': Unique identifier
                 - 'path': URL or file path
                 - 'content': Extracted policy text
                 - 'caption': Summary or short description
-            
+
         Returns:
-            str: The rendered prompt (evaluator_user_prompt.jinja) instructing how to 
-                 evaluate these policies against the query, deduplicate, and form 
+            str: The rendered prompt (evaluator_user_prompt.jinja) instructing how to
+                 evaluate these policies against the query, deduplicate, and form
                  a final JSON-like response.
         """
         return self.get_prompt(

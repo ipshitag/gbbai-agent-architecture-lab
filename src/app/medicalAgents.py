@@ -9,7 +9,7 @@ medical_research_planner = StreamlitConversableAgent(
         "You will assess the task's progress and delegate sub-tasks to other agents as needed. If no more information is needed and document looks good, mention STOP or TERMINATE"
     ),
     llm_config=llm_config,
-    avatar="📝"
+    avatar="📝",
 )
 
 final_medical_reviewer = StreamlitConversableAgent(
@@ -20,7 +20,7 @@ final_medical_reviewer = StreamlitConversableAgent(
         "security, and ethical standards. If documentation is ready for public circulation, mention STOP or TERMINATE"
     ),
     llm_config=llm_config,
-    avatar="🔍"
+    avatar="🔍",
 )
 
 medical_researcher = StreamlitConversableAgent(
@@ -30,5 +30,5 @@ medical_researcher = StreamlitConversableAgent(
         "Ensure the manuscript is scientifically robust, covering all critical aspects of your research."
     ),
     llm_config=llm_config,
-    avatar="🔬"
+    avatar="🔬",
 )

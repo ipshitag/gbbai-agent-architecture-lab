@@ -1,14 +1,16 @@
-import os
 import json
 import logging
-from typing import Optional, List, Dict, Any
+import os
+from typing import Any, Dict, List, Optional
 
-from tabulate import tabulate
-from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import MessageRole, MessageTextContent
 from azure.core.exceptions import HttpResponseError
+from azure.identity import DefaultAzureCredential
+from tabulate import tabulate
+
 from utils.ml_logging import get_logger
+
 
 class AzureAIAgents:
     """
@@ -22,7 +24,7 @@ class AzureAIAgents:
     def __init__(
         self,
         connection_string: Optional[str] = None,
-        credential: Optional[DefaultAzureCredential] = None
+        credential: Optional[DefaultAzureCredential] = None,
     ):
         """
         Initialize the AzureAIAgents class. If no connection string is provided,
@@ -37,17 +39,18 @@ class AzureAIAgents:
             connection_string = os.getenv("AZURE_AI_FOUNDRY_CONNECTION_STRING")
 
         if not connection_string:
-            raise ValueError("No Azure AI Foundry connection string provided or found in environment variable.")
+            raise ValueError(
+                "No Azure AI Foundry connection string provided or found in environment variable."
+            )
 
         if credential is None:
             credential = DefaultAzureCredential()
 
         # Create the AIProjectClient
         self.project = AIProjectClient.from_connection_string(
-            conn_str=connection_string,
-            credential=credential
+            conn_str=connection_string, credential=credential
         )
-        
+
         self.logger.info("AI Foundry project client created successfully.")
 
     def list_agents(self) -> None:
@@ -69,13 +72,7 @@ class AzureAIAgents:
             created_at = agent_data.get("created_at", "N/A")
             owner = agent_data.get("metadata", {}).get("owner", "N/A")
 
-            table_rows.append([
-                agent_id,
-                name,
-                model,
-                created_at,
-                owner
-            ])
+            table_rows.append([agent_id, name, model, created_at, owner])
 
         # Print the table using tabulate.
         print(tabulate(table_rows, headers=table_headers, tablefmt="grid"))
@@ -84,7 +81,7 @@ class AzureAIAgents:
     def get_agent(self, assistant_id: str) -> Dict[str, Any]:
         """
         Retrieves an agent's information by its assistant ID.
-        
+
         :param assistant_id: The unique ID for the agent.
         :return: Dictionary containing agent info if found.
         """
@@ -109,12 +106,12 @@ class AzureAIAgents:
         top_p: Optional[float] = None,
         response_format: Optional[Any] = None,
         metadata: Optional[Dict[str, str]] = None,
-        content_type: str = 'application/json',
-        **kwargs: Any
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> Dict[str, Any]:
         """
         Creates a basic AI agent using the project instance and extended parameters.
-        
+
         :param deployment_name: The deployment model name (defaults to env variable).
         :param name: Name of the agent.
         :param description: Description for the agent.
@@ -133,8 +130,12 @@ class AzureAIAgents:
         if not deployment_name:
             deployment_name = os.environ.get("AZURE_AOAI_CHAT_MODEL_NAME_DEPLOYMENT_ID")
             if not deployment_name:
-                self.logger.error("Environment variable 'AZURE_AOAI_CHAT_MODEL_NAME_DEPLOYMENT_ID' is not set.")
-                raise ValueError("Missing deployment_name and environment variable for Azure OpenAI model.")
+                self.logger.error(
+                    "Environment variable 'AZURE_AOAI_CHAT_MODEL_NAME_DEPLOYMENT_ID' is not set."
+                )
+                raise ValueError(
+                    "Missing deployment_name and environment variable for Azure OpenAI model."
+                )
 
         if metadata is None:
             metadata = {"owner": "IT Support"}
@@ -153,7 +154,7 @@ class AzureAIAgents:
                 response_format=response_format,
                 metadata=metadata,
                 content_type=content_type,
-                **kwargs
+                **kwargs,
             )
             self.logger.info(f"Created Agent ID: {created_agent.id}")
             self.logger.info(f"Agent Metadata: {created_agent.metadata}")
@@ -178,28 +179,31 @@ class AzureAIAgents:
         """
         agent_id = agent.get("id")
         if not agent_id:
-            raise ValueError("Agent object missing 'id' field. Cannot run conversation.")
+            raise ValueError(
+                "Agent object missing 'id' field. Cannot run conversation."
+            )
 
         try:
             thread = self.project.agents.create_thread()
             self.logger.info(f"[Agent {agent_id}] Created Thread: {thread.id}")
-            
+
             user_msg = self.project.agents.create_message(
-                thread_id=thread.id,
-                role=MessageRole.USER,
-                content=query
+                thread_id=thread.id, role=MessageRole.USER, content=query
             )
-            self.logger.info(f"[Agent {agent_id}] Created user message ID: {user_msg.id}")
-            
+            self.logger.info(
+                f"[Agent {agent_id}] Created user message ID: {user_msg.id}"
+            )
+
             run = self.project.agents.create_and_process_run(
-                thread_id=thread.id,
-                assistant_id=agent_id
+                thread_id=thread.id, assistant_id=agent_id
             )
-            self.logger.info(f"[Agent {agent_id}] Run finished with status: {run.status}")
-            
+            self.logger.info(
+                f"[Agent {agent_id}] Run finished with status: {run.status}"
+            )
+
             if run.status == "failed":
                 self.logger.error(f"[Agent {agent_id}] Run failed.")
-            
+
             all_messages = self.project.agents.list_messages(thread_id=thread.id)
             self.logger.info(f"----- Conversation for Agent {agent_id} -----")
 
@@ -219,7 +223,7 @@ class AzureAIAgents:
         except Exception as e:
             self.logger.error("Failed to create and process run", exc_info=True)
             raise e
-        
+
     def delete_agent(self, agent_id: str) -> None:
         """
         Deletes an existing agent by its ID.

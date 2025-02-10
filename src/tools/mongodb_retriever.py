@@ -1,21 +1,25 @@
+import logging
 import os
 import urllib.parse
-import pymongo
-import logging
 from typing import List
+
+import pymongo
+
 from src.aoai.azure_openai import AzureOpenAIManager
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 # Retrieve environment variables for MongoDB connection
-COSMOS_MONGO_USER = os.environ.get('COSMOS_MONGO_USER')
-COSMOS_MONGO_PWD = os.environ.get('COSMOS_MONGO_PWD')
-COSMOS_MONGO_SERVER = os.environ.get('COSMOS_MONGO_SERVER')
+COSMOS_MONGO_USER = os.environ.get("COSMOS_MONGO_USER")
+COSMOS_MONGO_PWD = os.environ.get("COSMOS_MONGO_PWD")
+COSMOS_MONGO_SERVER = os.environ.get("COSMOS_MONGO_SERVER")
 
 # Optionally, define the database and collection names via environment variables; otherwise, use defaults.
-DEFAULT_DATABASE = os.environ.get('COSMOS_MONGO_DATABASE', 'ExampleDB')
-DEFAULT_COLLECTION = os.environ.get('COSMOS_MONGO_COLLECTION', 'ExampleCollection')
+DEFAULT_DATABASE = os.environ.get("COSMOS_MONGO_DATABASE", "ExampleDB")
+DEFAULT_COLLECTION = os.environ.get("COSMOS_MONGO_COLLECTION", "ExampleCollection")
 
 # Construct the MongoDB connection string
 mongo_conn = (
@@ -30,12 +34,13 @@ mongo_conn = (
 
 # Initialize Azure OpenAI Manager
 aoai_helper = AzureOpenAIManager(
-    api_key=os.getenv('AZURE_OPENAI_KEY'),
-    api_version=os.getenv('AZURE_OPENAI_API_VERSION', "2023-05-15"),
-    azure_endpoint=os.getenv('AZURE_OPENAI_API_ENDPOINT'),
-    embedding_model_name=os.getenv('AZURE_AOAI_EMBEDDINGS_MODEL_NAME_DEPLOYMENT_ID'),
-    completion_model_name=os.getenv('AZURE_AOAI_CHAT_MODEL_NAME_DEPLOYMENT_ID'),
+    api_key=os.getenv("AZURE_OPENAI_KEY"),
+    api_version=os.getenv("AZURE_OPENAI_API_VERSION", "2023-05-15"),
+    azure_endpoint=os.getenv("AZURE_OPENAI_API_ENDPOINT"),
+    embedding_model_name=os.getenv("AZURE_AOAI_EMBEDDINGS_MODEL_NAME_DEPLOYMENT_ID"),
+    completion_model_name=os.getenv("AZURE_AOAI_CHAT_MODEL_NAME_DEPLOYMENT_ID"),
 )
+
 
 def generate_embeddings(text: str) -> List[float]:
     """
@@ -54,6 +59,7 @@ def generate_embeddings(text: str) -> List[float]:
         logging.error(f"Error generating embedding for text: {text}. Error: {e}")
         return []
 
+
 # Establish connection and select database
 try:
     mongo_client = pymongo.MongoClient(mongo_conn)
@@ -61,6 +67,7 @@ try:
     print("✅ Connected to MongoDB.")
 except pymongo.errors.ConnectionError as e:
     print(f"❌ MongoDB connection error: {e}")
+
 
 def retrieve_document(query: dict) -> dict:
     """
@@ -79,6 +86,7 @@ def retrieve_document(query: dict) -> dict:
     except Exception as e:
         print(f"Error retrieving document: {e}")
         return None
+
 
 def upsert_document(query: dict, document: dict) -> dict:
     """
@@ -100,11 +108,12 @@ def upsert_document(query: dict, document: dict) -> dict:
         return {
             "matched_count": result.matched_count,
             "modified_count": result.modified_count,
-            "upserted_id": result.upserted_id
+            "upserted_id": result.upserted_id,
         }
     except Exception as e:
         print(f"Error during upsert: {e}")
         return {}
+
 
 def update_document(query: dict, update: dict) -> int:
     """
@@ -125,6 +134,7 @@ def update_document(query: dict, update: dict) -> int:
         print(f"Error updating document: {e}")
         return 0
 
+
 def delete_document(query: dict) -> int:
     """
     Delete a single document from the default collection that matches the query.
@@ -142,6 +152,7 @@ def delete_document(query: dict) -> int:
     except Exception as e:
         print(f"Error deleting document: {e}")
         return 0
+
 
 def query_documents(query: dict) -> list:
     """
@@ -161,6 +172,7 @@ def query_documents(query: dict) -> list:
         print(f"Error querying documents: {e}")
         return []
 
+
 def vector_search(query: str):
     """
     Searches for semantically similar documents in CosmosDB using vector search.
@@ -173,8 +185,8 @@ def vector_search(query: str):
     Returns:
         The response from the best matching document if confidence is high; otherwise, None.
     """
-    SIMILARITY_THRESHOLD=0.96
-    
+    SIMILARITY_THRESHOLD = 0.96
+
     # Generate the embeddings for the query text
     embedding_response = generate_embeddings(query)
 
@@ -182,25 +194,22 @@ def vector_search(query: str):
     search_stage = {
         "$vectorSearch": {
             "index": "VectorSearchIndex",  # Ensure this matches the actual index name
-            "path": "queryVector",         # Must match the field storing embeddings
+            "path": "queryVector",  # Must match the field storing embeddings
             "queryVector": embedding_response,
             "numCandidates": 5,
-            "limit": 5
+            "limit": 5,
         }
     }
 
     # Projection stage to include similarity score and response field
     project_stage = {
-        "$project": {
-            "similarityScore": {"$meta": "searchScore"},
-            "response": 1
-        }
+        "$project": {"similarityScore": {"$meta": "searchScore"}, "response": 1}
     }
 
     # Assemble and execute the pipeline
     pipeline = [search_stage, project_stage]
     collection = db[DEFAULT_COLLECTION]
-    
+
     try:
         results = list(collection.aggregate(pipeline))
     except Exception as e:

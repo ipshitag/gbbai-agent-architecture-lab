@@ -2,8 +2,10 @@ from enum import Enum
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from semantic_kernel.connectors.ai.chat_completion_client_base import ChatCompletionClientBase
-    from semantic_kernel.connectors.ai.prompt_execution_settings import PromptExecutionSettings
+    from semantic_kernel.connectors.ai.chat_completion_client_base import \
+        ChatCompletionClientBase
+    from semantic_kernel.connectors.ai.prompt_execution_settings import \
+        PromptExecutionSettings
 
 
 class Services(str, Enum):
@@ -23,8 +25,10 @@ class Services(str, Enum):
     OLLAMA = "ollama"
     ONNX = "onnx"
     VERTEX_AI = "vertex_ai"
-    
+
+
 service_id = "default"
+
 
 def get_chat_completion_service_and_request_settings(
     service_name: Services,
@@ -44,9 +48,10 @@ def get_chat_completion_service_and_request_settings(
     }
     return chat_services[service_name]()
 
-def get_openai_chat_completion_service_and_request_settings() -> tuple[
-"ChatCompletionClientBase", "PromptExecutionSettings"
-]:
+
+def get_openai_chat_completion_service_and_request_settings() -> (
+    tuple["ChatCompletionClientBase", "PromptExecutionSettings"]
+):
     """Return OpenAI chat completion service and request settings.
 
     The service credentials can be read by 3 ways:
@@ -61,9 +66,7 @@ def get_openai_chat_completion_service_and_request_settings() -> tuple[
     https://learn.microsoft.com/en-us/python/api/semantic-kernel/semantic_kernel?view=semantic-kernel-python
     """
     from semantic_kernel.connectors.ai.open_ai import (
-        OpenAIChatCompletion,
-        OpenAIChatPromptExecutionSettings,
-    )
+        OpenAIChatCompletion, OpenAIChatPromptExecutionSettings)
 
     chat_service = OpenAIChatCompletion(service_id=service_id)
     request_settings = OpenAIChatPromptExecutionSettings(
@@ -73,9 +76,9 @@ def get_openai_chat_completion_service_and_request_settings() -> tuple[
     return chat_service, request_settings
 
 
-def get_azure_openai_chat_completion_service_and_request_settings() -> tuple[
-    "ChatCompletionClientBase", "PromptExecutionSettings"
-]:
+def get_azure_openai_chat_completion_service_and_request_settings() -> (
+    tuple["ChatCompletionClientBase", "PromptExecutionSettings"]
+):
     """Return Azure OpenAI chat completion service and request settings.
 
     The service credentials can be read by 3 ways:
@@ -90,9 +93,7 @@ def get_azure_openai_chat_completion_service_and_request_settings() -> tuple[
     https://learn.microsoft.com/en-us/python/api/semantic-kernel/semantic_kernel?view=semantic-kernel
     """
     from semantic_kernel.connectors.ai.open_ai import (
-        AzureChatCompletion,
-        AzureChatPromptExecutionSettings,
-    )
+        AzureChatCompletion, AzureChatPromptExecutionSettings)
 
     chat_service = AzureChatCompletion(service_id=service_id)
     request_settings = AzureChatPromptExecutionSettings(service_id=service_id)
@@ -100,9 +101,9 @@ def get_azure_openai_chat_completion_service_and_request_settings() -> tuple[
     return chat_service, request_settings
 
 
-def get_azure_ai_inference_chat_completion_service_and_request_settings() -> tuple[
-    "ChatCompletionClientBase", "PromptExecutionSettings"
-]:
+def get_azure_ai_inference_chat_completion_service_and_request_settings() -> (
+    tuple["ChatCompletionClientBase", "PromptExecutionSettings"]
+):
     """Return Azure AI Inference chat completion service and request settings.
 
     The service credentials can be read by 3 ways:
@@ -118,13 +119,14 @@ def get_azure_ai_inference_chat_completion_service_and_request_settings() -> tup
     """
     from semantic_kernel.connectors.ai.azure_ai_inference import (
         AzureAIInferenceChatCompletion,
-        AzureAIInferenceChatPromptExecutionSettings,
-    )
+        AzureAIInferenceChatPromptExecutionSettings)
 
     chat_service = AzureAIInferenceChatCompletion(
         service_id=service_id,
         ai_model_id="id",  # The model ID is simply an identifier as the model id cannot be obtained programmatically.
     )
-    request_settings = AzureAIInferenceChatPromptExecutionSettings(service_id=service_id)
+    request_settings = AzureAIInferenceChatPromptExecutionSettings(
+        service_id=service_id
+    )
 
     return chat_service, request_settings

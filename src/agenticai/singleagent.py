@@ -1,22 +1,24 @@
-import os
 import logging
+import os
 import random
 import string
+from typing import Any, Dict, List, Literal, Optional, Union
+
 from dotenv import load_dotenv
-from typing import Any, Dict, List, Optional, Union, Literal
-
 from semantic_kernel import Kernel
+from semantic_kernel.connectors.ai.chat_completion_client_base import \
+    ChatCompletionClientBase
+from semantic_kernel.connectors.ai.function_choice_behavior import \
+    FunctionChoiceBehavior
 from semantic_kernel.connectors.ai.open_ai import AzureChatCompletion
-
+from semantic_kernel.connectors.ai.open_ai.prompt_execution_settings.azure_chat_prompt_execution_settings import \
+    AzureChatPromptExecutionSettings
+from semantic_kernel.connectors.ai.prompt_execution_settings import \
+    PromptExecutionSettings
 from semantic_kernel.contents.chat_history import ChatHistory
-from semantic_kernel.connectors.ai.chat_completion_client_base import ChatCompletionClientBase
-from semantic_kernel.connectors.ai.prompt_execution_settings import PromptExecutionSettings
-from semantic_kernel.connectors.ai.open_ai.prompt_execution_settings.azure_chat_prompt_execution_settings import (
-    AzureChatPromptExecutionSettings,
-)
 from semantic_kernel.functions.kernel_arguments import KernelArguments
-from semantic_kernel.connectors.ai.function_choice_behavior import FunctionChoiceBehavior
 from semantic_kernel.utils.logging import setup_logging
+
 from src.agenticai.skills import Skills
 from utils.ml_logging import get_logger
 
@@ -44,7 +46,7 @@ class ChatAgent:
         azure_openai_chat_deployment_id: Optional[str] = None,
     ) -> None:
         """
-        Initialize the ChatAgent with optional parameters for service configuration, 
+        Initialize the ChatAgent with optional parameters for service configuration,
         agent instructions, skills to load, and an agentic "planner" configuration/behavior.
 
         :param service_id: (optional) Azure OpenAI service ID (default: "openai-chat" if not provided).
@@ -52,22 +54,22 @@ class ChatAgent:
         :param id: (optional) A unique ID for this agent instance.
         :param description: (optional) A textual description of the agent's role or purpose.
         :param instructions: (optional) High-level instructions or role definition for the agent.
-        :param skills: (optional) List of plugin (skill) names to load upon initialization 
+        :param skills: (optional) List of plugin (skill) names to load upon initialization
                        (e.g., ["retrieval", "main"]).
         :param planner_config: (optional) PromptExecutionSettings controlling how the LLM (planner) behaves.
-        :param planner_behavior: (optional) A FunctionChoiceBehavior that determines how the agent 
+        :param planner_behavior: (optional) A FunctionChoiceBehavior that determines how the agent
                                  invokes or avoids plugin functions (e.g., Auto, NoneInvoke, Required).
         :param tracing_enabled: (optional) Flag to enable more detailed logs (DEBUG level).
-        :param azure_openai_key: (optional) Override for the Azure OpenAI key 
+        :param azure_openai_key: (optional) Override for the Azure OpenAI key
                                  (otherwise taken from environment variable).
-        :param azure_openai_endpoint: (optional) Override for the Azure OpenAI endpoint URI 
+        :param azure_openai_endpoint: (optional) Override for the Azure OpenAI endpoint URI
                                       (otherwise from environment variable).
-        :param azure_openai_api_version: (optional) Override for the Azure OpenAI API version 
+        :param azure_openai_api_version: (optional) Override for the Azure OpenAI API version
                                          (otherwise from environment variable).
-        :param azure_openai_chat_deployment_id: (optional) Override for the Azure OpenAI model deployment name 
+        :param azure_openai_chat_deployment_id: (optional) Override for the Azure OpenAI model deployment name
                                                 (otherwise from environment variable).
 
-        :raises ValueError: If required environment variables for Azure OpenAI are missing 
+        :raises ValueError: If required environment variables for Azure OpenAI are missing
                            (and are not passed explicitly).
         """
 
@@ -99,10 +101,15 @@ class ChatAgent:
             self.add_user_message(instructions)
 
         self.AZURE_OPENAI_KEY = azure_openai_key or os.getenv("AZURE_OPENAI_KEY")
-        self.AZURE_OPENAI_API_ENDPOINT = azure_openai_endpoint or os.getenv("AZURE_OPENAI_API_ENDPOINT")
-        self.AZURE_OPENAI_API_VERSION = azure_openai_api_version or os.getenv("AZURE_OPENAI_API_VERSION")
+        self.AZURE_OPENAI_API_ENDPOINT = azure_openai_endpoint or os.getenv(
+            "AZURE_OPENAI_API_ENDPOINT"
+        )
+        self.AZURE_OPENAI_API_VERSION = azure_openai_api_version or os.getenv(
+            "AZURE_OPENAI_API_VERSION"
+        )
         self.AZURE_AOAI_CHAT_MODEL_NAME_DEPLOYMENT_ID = (
-            azure_openai_chat_deployment_id or os.getenv("AZURE_AOAI_CHAT_MODEL_NAME_DEPLOYMENT_ID")
+            azure_openai_chat_deployment_id
+            or os.getenv("AZURE_AOAI_CHAT_MODEL_NAME_DEPLOYMENT_ID")
         )
 
         # Define the four required variables in a dictionary
@@ -114,13 +121,15 @@ class ChatAgent:
         }
 
         # Collect any that are missing or empty
-        missing_vars = [var_name for var_name, var_value in required_vars.items() if not var_value]
+        missing_vars = [
+            var_name for var_name, var_value in required_vars.items() if not var_value
+        ]
 
         if missing_vars:
             # Print or log the missing variables
             self.logger.error(
                 "The following Azure OpenAI settings are missing: %s",
-                ", ".join(missing_vars)
+                ", ".join(missing_vars),
             )
             raise ValueError(
                 f"Missing the following required Azure OpenAI settings: {', '.join(missing_vars)}. "
@@ -132,7 +141,9 @@ class ChatAgent:
         self.kernel = self._initialize_kernel(self.service_id)
 
         self.planner_config = planner_config or self._configure_planner_config()
-        self.planner_behavior = planner_behavior or self.planner_config.function_choice_behavior
+        self.planner_behavior = (
+            planner_behavior or self.planner_config.function_choice_behavior
+        )
 
         # Skill management
         self._skills_manager = Skills(
@@ -153,7 +164,6 @@ class ChatAgent:
 
         self.chat_completion: Optional[AzureChatCompletion] = None
 
-
         # Log the agent creation with agentic planner information
         self.logger.info(
             "Created ChatAgent '%s' (ID: %s) with service '%s', planner_config=%s, planner_behavior=%s, skills=%s",
@@ -164,14 +174,14 @@ class ChatAgent:
             repr(self.planner_behavior),
             skills or "None",
         )
-    
+
     @staticmethod
     def _generate_8digit_id() -> str:
         """
         Generate an 8-digit numeric string (e.g., '49382716')
         using random.choices for clarity and flexibility.
         """
-        return ''.join(random.choices(string.digits, k=8))
+        return "".join(random.choices(string.digits, k=8))
 
     def _initialize_kernel(self, service_id: str) -> Kernel:
         """
@@ -197,10 +207,11 @@ class ChatAgent:
 
         except Exception as e:
             self.logger.error(
-                "Failed to initialize the Kernel or retrieve ChatCompletion service: %s", e, exc_info=True
+                "Failed to initialize the Kernel or retrieve ChatCompletion service: %s",
+                e,
+                exc_info=True,
             )
             raise
-
 
     def _configure_planner_config(self) -> AzureChatPromptExecutionSettings:
         """
@@ -238,10 +249,10 @@ class ChatAgent:
         stop_sequences: Optional[List[str]] = None,
         stream: bool = False,
         user: Optional[str] = None,
-        function_call: Optional[str] = None
+        function_call: Optional[str] = None,
     ) -> None:
         """
-        Configure the AzureChatPromptExecutionSettings for the agent. 
+        Configure the AzureChatPromptExecutionSettings for the agent.
         These settings control how the model will generate responses.
 
         :param temperature: Controls the "creativity" or randomness of the output. Higher values = more random.
@@ -286,7 +297,7 @@ class ChatAgent:
         enable_kernel_functions: bool = True,
         max_auto_invoke_attempts: int = 5,
         filters: Optional[Dict[str, List[str]]] = None,
-        behavior_type: Optional[str] = None
+        behavior_type: Optional[str] = None,
     ) -> None:
         """
         Set and configure function choice behavior for the agent.
@@ -301,7 +312,7 @@ class ChatAgent:
                     "included_functions": ["functionA"],
                     "excluded_functions": ["functionB"]
                 }
-        :param behavior_type: The type of function choice behavior. 
+        :param behavior_type: The type of function choice behavior.
             Possible values:
                 - "Auto": Auto invoke functions if relevant.
                 - "NoneInvoke": Do not invoke, but can describe them.
@@ -323,7 +334,7 @@ class ChatAgent:
             Union[
                 PromptExecutionSettings,
                 List[PromptExecutionSettings],
-                Dict[str, PromptExecutionSettings]
+                Dict[str, PromptExecutionSettings],
             ]
         ] = None,
     ) -> None:
@@ -333,7 +344,7 @@ class ChatAgent:
 
         :param arguments: A dictionary of custom argument pairs (key=value).
             These can be any fields your custom functions might require beyond just `input`.
-        :param settings: Optionally provide custom PromptExecutionSettings. 
+        :param settings: Optionally provide custom PromptExecutionSettings.
             This can be:
                 - A single PromptExecutionSettings object
                 - A list of PromptExecutionSettings (each with a unique service_id)
@@ -344,7 +355,7 @@ class ChatAgent:
         self.logger.info(
             "Default kernel arguments updated: %s, with settings: %s",
             self._default_kernel_arguments,
-            self._default_kernel_settings
+            self._default_kernel_settings,
         )
 
     def add_system_message(self, message: str) -> None:
@@ -379,12 +390,12 @@ class ChatAgent:
             Union[
                 PromptExecutionSettings,
                 List[PromptExecutionSettings],
-                Dict[str, PromptExecutionSettings]
+                Dict[str, PromptExecutionSettings],
             ]
-        ] = None
+        ] = None,
     ) -> str:
         """
-        Execute the agent's main functionality with the given prompts, 
+        Execute the agent's main functionality with the given prompts,
         optionally overriding default kernel arguments and/or settings.
 
         :param system_prompt: The system prompt to set the assistant's role or global instructions.
@@ -397,7 +408,7 @@ class ChatAgent:
         :return: AI response as a string.
         """
         if system_prompt is not None:
-            self.add_system_message(system_prompt)            
+            self.add_system_message(system_prompt)
         if user_prompt is not None:
             self.add_user_message(user_prompt)
 
@@ -410,14 +421,20 @@ class ChatAgent:
                 final_args.update(run_arguments)
 
             # Also handle custom settings if provided, else fall back to defaults
-            final_settings = run_settings if run_settings is not None else self._default_kernel_settings
+            final_settings = (
+                run_settings
+                if run_settings is not None
+                else self._default_kernel_settings
+            )
 
             # Construct KernelArguments
             args_for_kernel = KernelArguments(settings=final_settings, **final_args)
             args_for_kernel["input"] = user_prompt
 
             if self.chat_completion is None:
-                self.chat_completion: AzureChatCompletion = self.kernel.get_service(type=ChatCompletionClientBase)
+                self.chat_completion: AzureChatCompletion = self.kernel.get_service(
+                    type=ChatCompletionClientBase
+                )
 
             result = await self.chat_completion.get_chat_message_contents(
                 chat_history=self.chat_history,
@@ -448,7 +465,9 @@ class ChatAgent:
             self.logger.error("Failed to add plugin: %s", plugin_name, exc_info=True)
             raise
 
-    def load_skills(self, skills: List[Literal["retrieval", "main", "rewriting", "evaluation"]]) -> None:
+    def load_skills(
+        self, skills: List[Literal["retrieval", "main", "rewriting", "evaluation"]]
+    ) -> None:
         """
         Load a list of specified "skills" (plugins) into the kernel.
 

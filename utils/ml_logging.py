@@ -41,7 +41,6 @@ def get_logger(
     level: Optional[int] = None,
     include_stream_handler: bool = True,
     tracing_enabled: bool = False,
-    
 ) -> logging.Logger:  # type: ignore
     """
     Returns a configured logger with a custom name, level, and formatter.

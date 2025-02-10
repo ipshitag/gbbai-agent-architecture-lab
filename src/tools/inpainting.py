@@ -1,16 +1,19 @@
+import base64
+import json
+import logging
 import os
 import ssl
-import json
-import requests
-import base64
 import traceback
-import logging
-from PIL import Image
 from io import BytesIO
-from typing import Optional, List, Dict, Any
+from typing import Any, Dict, List, Optional
+
+import requests
+from PIL import Image
+
 from utils.ml_logging import get_logger
 
 logger = get_logger()
+
 
 def allow_self_signed_https(allowed: bool) -> None:
     """
@@ -22,7 +25,11 @@ def allow_self_signed_https(allowed: bool) -> None:
     :return: None
     :raises: None
     """
-    if allowed and not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unverified_context', None):
+    if (
+        allowed
+        and not os.environ.get("PYTHONHTTPSVERIFY", "")
+        and getattr(ssl, "_create_unverified_context", None)
+    ):
         ssl._create_default_https_context = ssl._create_unverified_context
 
 
@@ -36,10 +43,7 @@ def make_request(url: str, body: dict, api_key: str) -> Optional[bytes]:
     :return: The API response content as bytes, or None if the request fails.
     :raises requests.exceptions.HTTPError: If there is an HTTP error during the request.
     """
-    headers = {
-        'Content-Type': 'application/json',
-        'Authorization': f'Bearer {api_key}'
-    }
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {api_key}"}
     try:
         response = requests.post(url, json=body, headers=headers)
         response.raise_for_status()
@@ -66,19 +70,16 @@ def inpainting(image: str, mask_image: str, prompt: str) -> Optional[bytes]:
                 "prompt": prompt,
                 "image": image,
                 "mask_image": mask_image,
-                "negative_prompt": "blurry,cartoonish,dog"
+                "negative_prompt": "blurry,cartoonish,dog",
             },
             "columns": ["prompt", "image", "mask_image"],
             "index": [0],
-            "parameters": {
-                "num_inference_steps": 500,
-                "guidance_scale": 7.5
-            }
+            "parameters": {"num_inference_steps": 500, "guidance_scale": 7.5},
         }
     }
 
-    url = os.getenv('INPAINTING_URL')
-    api_key = os.getenv('INPAINTING_API_KEY')
+    url = os.getenv("INPAINTING_URL")
+    api_key = os.getenv("INPAINTING_API_KEY")
     return make_request(url, data, api_key)
 
 
@@ -96,12 +97,12 @@ def refiner(image: str, prompt: str) -> Optional[bytes]:
         "input_data": {
             "data": [{"prompt": prompt, "image": image}],
             "columns": ["prompt", "image"],
-            "index": [0]
+            "index": [0],
         }
     }
 
-    url = os.getenv('REFINER_URL')
-    api_key = os.getenv('REFINER_API_KEY')
+    url = os.getenv("REFINER_URL")
+    api_key = os.getenv("REFINER_API_KEY")
     return make_request(url, data, api_key)
 
 
@@ -147,13 +148,15 @@ def image_to_base64(image_path_or_url: str) -> Optional[str]:
     :raises ValueError: If there is an error converting the image to base64.
     """
     try:
-        if image_path_or_url.startswith('http://') or image_path_or_url.startswith('https://'):
+        if image_path_or_url.startswith("http://") or image_path_or_url.startswith(
+            "https://"
+        ):
             response = requests.get(image_path_or_url)
             response.raise_for_status()
             image = Image.open(BytesIO(response.content))
         else:
             image = Image.open(image_path_or_url)
-        
+
         buffered = BytesIO()
         image.save(buffered, format="JPEG")
         return base64.b64encode(buffered.getvalue()).decode("utf-8")
@@ -183,10 +186,12 @@ def generate_tags_and_boxes(image_path: str) -> List[Dict[str, Any]]:
             logger.error("Azure Computer Vision endpoint or key is not set.")
             return []
 
-        client = ImageAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+        client = ImageAnalysisClient(
+            endpoint=endpoint, credential=AzureKeyCredential(key)
+        )
         logger.info(f"Initialized ImageAnalysisClient with endpoint: {endpoint}")
 
-        if image_path.startswith(('http://', 'https://')):
+        if image_path.startswith(("http://", "https://")):
             logger.info(f"Analyzing image from URL: {image_path}")
             result = client.analyze_from_url(
                 image_url=image_path,
@@ -205,25 +210,32 @@ def generate_tags_and_boxes(image_path: str) -> List[Dict[str, Any]]:
 
         logger.info("Image analysis completed.")
         objs = []
-        if 'values' in result.objects:
-            logger.info(f"Detected {len(result.objects['values'])} objects in the image.")
-            for obj in result.objects['values']:
-                if 'boundingBox' in obj:
-                    bounding_box = obj['boundingBox']
-                    tags = obj.get('tags', [])
-                    confidence = tags[0]['confidence'] if tags else None
-                    tag_name = tags[0]['name'] if tags else 'unknown'
+        if "values" in result.objects:
+            logger.info(
+                f"Detected {len(result.objects['values'])} objects in the image."
+            )
+            for obj in result.objects["values"]:
+                if "boundingBox" in obj:
+                    bounding_box = obj["boundingBox"]
+                    tags = obj.get("tags", [])
+                    confidence = tags[0]["confidence"] if tags else None
+                    tag_name = tags[0]["name"] if tags else "unknown"
 
-                    objs.append({
-                        "box": [
-                            bounding_box['x'], bounding_box['y'],
-                            bounding_box['x'] + bounding_box['w'],
-                            bounding_box['y'] + bounding_box['h']
-                        ],
-                        "confidence": confidence,
-                        "tag": tag_name
-                    })
-                    logger.info(f"Object detected: {tag_name} with confidence {confidence} and bounding box {bounding_box}")
+                    objs.append(
+                        {
+                            "box": [
+                                bounding_box["x"],
+                                bounding_box["y"],
+                                bounding_box["x"] + bounding_box["w"],
+                                bounding_box["y"] + bounding_box["h"],
+                            ],
+                            "confidence": confidence,
+                            "tag": tag_name,
+                        }
+                    )
+                    logger.info(
+                        f"Object detected: {tag_name} with confidence {confidence} and bounding box {bounding_box}"
+                    )
                 else:
                     logger.warning(f"Object does not have boundingBox: {obj}")
         else:
@@ -236,7 +248,7 @@ def generate_tags_and_boxes(image_path: str) -> List[Dict[str, Any]]:
     except Exception as e:
         logger.error(f"Error generating tags and boxes: {e}")
         return []
-    
+
 
 def sam(image: str, bounding_box: List[int]) -> Optional[bytes]:
     """
@@ -250,15 +262,21 @@ def sam(image: str, bounding_box: List[int]) -> Optional[bytes]:
     allow_self_signed_https(True)
     data = {
         "input_data": {
-            "columns": ["image", "input_points", "input_boxes", "input_labels", "multimask_output"],
+            "columns": [
+                "image",
+                "input_points",
+                "input_boxes",
+                "input_labels",
+                "multimask_output",
+            ],
             "index": [0],
-            "data": [[image, "", f"[{bounding_box}]", "", False]]
+            "data": [[image, "", f"[{bounding_box}]", "", False]],
         },
-        "params": {}
+        "params": {},
     }
 
-    url = os.getenv('SAM_URL')
-    api_key = os.getenv('SAM_API_KEY')
+    url = os.getenv("SAM_URL")
+    api_key = os.getenv("SAM_API_KEY")
     return make_request(url, data, api_key)
 
 
@@ -272,12 +290,13 @@ def save_image_locally(image_bytes: bytes, image_path: str) -> str:
     :raises ValueError: If there is an error saving the image.
     """
     try:
-        with open(image_path, 'wb') as f:
+        with open(image_path, "wb") as f:
             f.write(image_bytes)
         return image_path
     except Exception as e:
         logging.error(f"Error saving image: {e}")
         raise ValueError("Failed to save image")
+
 
 def edit_image(image_path: str, prompt: str) -> str:
     """
@@ -292,7 +311,9 @@ def edit_image(image_path: str, prompt: str) -> str:
     :raises DataError: If there are issues with data retrieval or processing.
     """
     try:
-        logger.info(f"Starting image editing process for image: {image_path} with prompt: {prompt}")
+        logger.info(
+            f"Starting image editing process for image: {image_path} with prompt: {prompt}"
+        )
 
         bounding_boxes = generate_tags_and_boxes(image_path)
         if not bounding_boxes:
@@ -309,8 +330,10 @@ def edit_image(image_path: str, prompt: str) -> str:
             logger.error("SAM failed")
             return
 
-        sam_data = json.loads(sam_result.decode('utf-8'))
-        mask_base64 = sam_data[0]["response"]["predictions"][0]["masks_per_prediction"][0]["encoded_binary_mask"]
+        sam_data = json.loads(sam_result.decode("utf-8"))
+        mask_base64 = sam_data[0]["response"]["predictions"][0]["masks_per_prediction"][
+            0
+        ]["encoded_binary_mask"]
         logger.info("SAM completed successfully")
 
         logger.info("Running Inpainting...")
@@ -320,7 +343,7 @@ def edit_image(image_path: str, prompt: str) -> str:
             logger.error("Inpainting failed")
             return
 
-        inpainting_data = json.loads(inpainting_result.decode('utf-8'))
+        inpainting_data = json.loads(inpainting_result.decode("utf-8"))
         generated_image_base64 = inpainting_data[0]["generated_image"]
         logger.info("Inpainting completed successfully")
 
@@ -331,7 +354,7 @@ def edit_image(image_path: str, prompt: str) -> str:
         edited_image_path = "edited_image.jpg"
 
         # Save the image locally
-        with open(edited_image_path, 'wb') as f:
+        with open(edited_image_path, "wb") as f:
             f.write(generated_image_bytes)
 
         logger.info(f"Edited image saved to: {edited_image_path}")
@@ -341,8 +364,3 @@ def edit_image(image_path: str, prompt: str) -> str:
         logger.error(f"Error editing image: {e}")
         logger.error(traceback.format_exc())
         raise
-
-
-
-
-

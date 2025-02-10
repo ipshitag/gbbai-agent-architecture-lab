@@ -238,7 +238,7 @@ class AzureOpenAIManager:
             logger.error(f"Error details: {e}")
             logger.error(f"Traceback: {traceback.format_exc()}")
             return None, None
-        
+
     async def generate_chat_response_o1(
         self,
         query: str,
@@ -316,8 +316,10 @@ class AzureOpenAIManager:
             return None
         except Exception as e:
             error_message = str(e)
-            if 'maximum context length' in error_message:
-                logger.warning("Context length exceeded, reducing conversation history and retrying.")
+            if "maximum context length" in error_message:
+                logger.warning(
+                    "Context length exceeded, reducing conversation history and retrying."
+                )
                 logger.warning(f"Error details: {e}")
                 return "maximum context length"
             logger.error(
@@ -506,8 +508,10 @@ class AzureOpenAIManager:
             return None
         except Exception as e:
             error_message = str(e)
-            if 'maximum context length' in error_message:
-                logger.warning("Context length exceeded, reducing conversation history and retrying.")
+            if "maximum context length" in error_message:
+                logger.warning(
+                    "Context length exceeded, reducing conversation history and retrying."
+                )
                 logger.warning(f"Error details: {e}")
                 return "maximum context length"
             logger.error(

@@ -1,10 +1,12 @@
-import logging
-from PIL import Image
 import argparse
-from autogen import register_function, ConversableAgent, AssistantAgent, runtime_logging
+import logging
+import os
+
+from autogen import (AssistantAgent, ConversableAgent, register_function,
+                     runtime_logging)
 from autogen.agentchat.contrib import img_utils
 from dotenv import load_dotenv
-import os
+from PIL import Image
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -12,12 +14,15 @@ logging.basicConfig(level=logging.INFO)
 # Load environment variables from a .env file
 load_dotenv()
 
-# import tools 
-from src.tools.inpainting import edit_image, inpainting, sam, refiner, generate_tags_and_boxes
+# import tools
+from src.tools.inpainting import (edit_image, generate_tags_and_boxes,
+                                  inpainting, refiner, sam)
 
 # Azure Open AI Completion Configuration
 AZURE_OPENAI_KEY = os.getenv("AZURE_OPENAI_KEY")
-AZURE_AOAI_CHAT_MODEL_NAME_DEPLOYMENT_ID = os.getenv("AZURE_AOAI_CHAT_MODEL_NAME_DEPLOYMENT_ID")
+AZURE_AOAI_CHAT_MODEL_NAME_DEPLOYMENT_ID = os.getenv(
+    "AZURE_AOAI_CHAT_MODEL_NAME_DEPLOYMENT_ID"
+)
 AZURE_OPENAI_API_ENDPOINT = os.getenv("AZURE_OPENAI_API_ENDPOINT")
 AZURE_OPENAI_API_VERSION = os.getenv("AZURE_OPENAI_API_VERSION")
 
@@ -30,11 +35,10 @@ llm_config = {
             "api_type": "azure",
             "api_key": AZURE_OPENAI_KEY,
             "base_url": AZURE_OPENAI_API_ENDPOINT,
-            "api_version": AZURE_OPENAI_API_VERSION
+            "api_version": AZURE_OPENAI_API_VERSION,
         }
     ]
 }
-
 
 
 def extract_images(sender: ConversableAgent, recipient: ConversableAgent) -> Image:
@@ -57,6 +61,7 @@ def extract_images(sender: ConversableAgent, recipient: ConversableAgent) -> Ima
         raise ValueError("No image data found in messages.")
 
     return images
+
 
 # Initialize Agents
 planner_agent = ConversableAgent(
@@ -100,36 +105,37 @@ for caller in [planner_agent, image_editor_agent]:
         caller=caller,
         executor=user_proxy,
         name="inpainting",
-        description="Perform inpainting on an image based on the provided prompt."
+        description="Perform inpainting on an image based on the provided prompt.",
     )
     register_function(
         refiner,
         caller=caller,
         executor=user_proxy,
         name="refiner",
-        description="Refine an image based on the provided prompt."
+        description="Refine an image based on the provided prompt.",
     )
     register_function(
         generate_tags_and_boxes,
         caller=caller,
         executor=user_proxy,
         name="generate_tags_and_boxes",
-        description="Generate tags and bounding boxes for an image."
+        description="Generate tags and bounding boxes for an image.",
     )
     register_function(
         sam,
         caller=caller,
         executor=user_proxy,
         name="sam",
-        description="Run SAM on an image with the provided bounding boxes."
+        description="Run SAM on an image with the provided bounding boxes.",
     )
     register_function(
         edit_image,
         caller=caller,
         executor=user_proxy,
         name="edit_image",
-        description="Edit an image using object detection, segmentation, and inpainting techniques."
+        description="Edit an image using object detection, segmentation, and inpainting techniques.",
     )
+
 
 def image_editing_session(image_path: str, initial_prompt: str):
     """
@@ -148,24 +154,30 @@ def image_editing_session(image_path: str, initial_prompt: str):
         edited_images = extract_images(image_editor_agent, planner_agent)
 
         feedback = input("Are you happy with the image? (yes/no): ")
-        
-        if feedback.lower() == 'yes':
+
+        if feedback.lower() == "yes":
             logging.info("Image editing complete.")
             break
         else:
             initial_prompt = input("Please describe the changes you want: ")
+
 
 def main():
     """
     Main entry point for the image editing script.
     """
     parser = argparse.ArgumentParser(description="Image Editing Session")
-    parser.add_argument('--image_path', type=str, required=True, help="Path or URL to the image")
-    parser.add_argument('--prompt', type=str, required=True, help="Initial prompt for editing the image")
+    parser.add_argument(
+        "--image_path", type=str, required=True, help="Path or URL to the image"
+    )
+    parser.add_argument(
+        "--prompt", type=str, required=True, help="Initial prompt for editing the image"
+    )
 
     args = parser.parse_args()
 
     image_editing_session(args.image_path, args.prompt)
+
 
 if __name__ == "__main__":
     logging_session_id = runtime_logging.start(config={"dbname": "logs.db"})

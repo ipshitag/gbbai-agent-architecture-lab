@@ -1,19 +1,25 @@
-import streamlit as st
 import asyncio
-from autogen import GroupChat, GroupChatManager
-from src.app.autogenhelper import get_llm_config
-from typing import List, Dict, Any, Optional
-import autogen
-from src.app.autogenhelper import StreamlitConversableAgent, get_llm_config
-from src.app.deploymentcenter import load_default_deployment, create_benchmark_center, display_deployments
-from src.app.agentscenter import create_agent_center
 import re
+from typing import Any, Dict, List, Optional
+
+import autogen
+import streamlit as st
+from autogen import GroupChat, GroupChatManager
+
+from src.app.agentscenter import create_agent_center
+from src.app.autogenhelper import StreamlitConversableAgent, get_llm_config
+from src.app.deploymentcenter import (create_benchmark_center,
+                                      display_deployments,
+                                      load_default_deployment)
 from utils.ml_logging import get_logger
 
 # Set up logger
 logger = get_logger()
 
-st.set_page_config(page_title="Medical Research Chat App", page_icon="🤖", layout="centered")
+st.set_page_config(
+    page_title="Medical Research Chat App", page_icon="🤖", layout="centered"
+)
+
 
 def initialize_session_state(vars: List[str], initial_values: Dict[str, Any]) -> None:
     """
@@ -26,13 +32,14 @@ def initialize_session_state(vars: List[str], initial_values: Dict[str, Any]) ->
         if var not in st.session_state:
             st.session_state[var] = initial_values.get(var, None)
 
+
 session_vars = [
     "conversation_history",
     "chat_history",
     "messages",
     "agents_loaded",
     "deployments",
-    "settings_agent"
+    "settings_agent",
 ]
 initial_values = {
     "conversation_history": [],
@@ -62,30 +69,32 @@ initial_values = {
 
 initialize_session_state(session_vars, initial_values)
 
+
 def initialize_groupchat():
     agents_dict = {
-        "MedicalResearchPlanner": st.session_state.agents['MedicalResearchPlanner']['object'],
-        "FinalMedicalReviewer": st.session_state.agents['FinalMedicalReviewer']['object'],
-        "MedicalResearcher": st.session_state.agents['MedicalResearcher']['object']
+        "MedicalResearchPlanner": st.session_state.agents["MedicalResearchPlanner"][
+            "object"
+        ],
+        "FinalMedicalReviewer": st.session_state.agents["FinalMedicalReviewer"][
+            "object"
+        ],
+        "MedicalResearcher": st.session_state.agents["MedicalResearcher"]["object"],
     }
     medical_groupchat = GroupChat(
         agents=[
-            agents_dict["MedicalResearchPlanner"], 
-            agents_dict["FinalMedicalReviewer"], 
-            agents_dict["MedicalResearcher"]
+            agents_dict["MedicalResearchPlanner"],
+            agents_dict["FinalMedicalReviewer"],
+            agents_dict["MedicalResearcher"],
         ],
         messages=[],
         max_round=3,
         allowed_or_disallowed_speaker_transitions={
             agents_dict["MedicalResearchPlanner"]: [
-                agents_dict["FinalMedicalReviewer"], agents_dict["MedicalResearcher"]
+                agents_dict["FinalMedicalReviewer"],
+                agents_dict["MedicalResearcher"],
             ],
-            agents_dict["FinalMedicalReviewer"]: [
-                agents_dict["MedicalResearcher"]
-            ],
-            agents_dict["MedicalResearcher"]: [
-                agents_dict["FinalMedicalReviewer"]
-            ]
+            agents_dict["FinalMedicalReviewer"]: [agents_dict["MedicalResearcher"]],
+            agents_dict["MedicalResearcher"]: [agents_dict["FinalMedicalReviewer"]],
         },
         speaker_transitions_type="allowed",
     )
@@ -98,6 +107,7 @@ def initialize_groupchat():
 
     if "medical_manager" not in st.session_state:
         st.session_state.MedicalManager = medical_manager
+
 
 def configure_agent_settings(agent_name: str) -> dict:
     """
@@ -112,7 +122,7 @@ def configure_agent_settings(agent_name: str) -> dict:
         st.session_state[f"settings_{agent_name}"]["model"] = st.selectbox(
             f"Model for {agent_name}",
             options=["Model A", "Model B", "Model C"],
-            help="Select the model to be used by this agent."
+            help="Select the model to be used by this agent.",
         )
         st.session_state[f"settings_{agent_name}"]["temperature"] = st.slider(
             "Temperature",
@@ -156,6 +166,7 @@ def configure_agent_settings(agent_name: str) -> dict:
 
     return st.session_state[f"settings_{agent_name}"]
 
+
 def configure_sidebar() -> None:
     """
     Configure the sidebar with benchmark Center and deployment forms, allowing users to choose between evaluating a Large Language Model (LLM) or a System based on LLM.
@@ -168,8 +179,9 @@ def configure_sidebar() -> None:
         display_deployments()
 
         st.sidebar.divider()
-        
+
         create_agent_center()
+
 
 def initialize_chatbot() -> None:
     """
@@ -177,24 +189,24 @@ def initialize_chatbot() -> None:
     """
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = [
-        {
-            "role": "assistant",
-            "content": (
-                "🚀 Ask away! I am all ears and ready to dive into your queries. "
-                "I'm here to make sense of the numbers from your benchmarks and support you during your analysis! 😄📊"
-            ),
-        }
-    ]
+            {
+                "role": "assistant",
+                "content": (
+                    "🚀 Ask away! I am all ears and ready to dive into your queries. "
+                    "I'm here to make sense of the numbers from your benchmarks and support you during your analysis! 😄📊"
+                ),
+            }
+        ]
     if "messages_quality" not in st.session_state:
         st.session_state.messages_quality = [
-        {
-            "role": "assistant",
-            "content": (
-                "🚀 Ask away! I am all ears and ready to dive into your queries. "
-                "I'm here to make sense of the numbers from your benchmarks and support you during your analysis! 😄📊"
-            ),
-        },
-    ]
+            {
+                "role": "assistant",
+                "content": (
+                    "🚀 Ask away! I am all ears and ready to dive into your queries. "
+                    "I'm here to make sense of the numbers from your benchmarks and support you during your analysis! 😄📊"
+                ),
+            },
+        ]
     for message in st.session_state.chat_history:
         role = message["role"]
         content = message["content"]
@@ -207,7 +219,6 @@ def initialize_chatbot() -> None:
 
 
 async def main():
-
     configure_sidebar()
     st.markdown(
         "<h4 style='text-align: center;'> Medical Research Assistant 🤖</h4>",
@@ -220,7 +231,7 @@ async def main():
     prompt = st.chat_input("Ask away!")
     if prompt:
         with chat_container:
-            with st.chat_message('You', avatar='👩🏻'):
+            with st.chat_message("You", avatar="👩🏻"):
                 formatted_message = f"""
                 <div style='padding: 10px; border-radius: 5px;'>
                     <strong>User</strong>
@@ -234,24 +245,31 @@ async def main():
             terminate_variation_pattern = re.compile(r".*TERMINATED.*", re.IGNORECASE)
             finalize_pattern = re.compile(r".*TERMINATE.*", re.IGNORECASE)
 
-            is_termination_msg = lambda x: any([
-                terminate_pattern.search(x.get("content", "")),
-                terminate_variation_pattern.search(x.get("content", "")),
-                finalize_pattern.search(x.get("content", "")),
-            ])
+            is_termination_msg = lambda x: any(
+                [
+                    terminate_pattern.search(x.get("content", "")),
+                    terminate_variation_pattern.search(x.get("content", "")),
+                    finalize_pattern.search(x.get("content", "")),
+                ]
+            )
 
-            logging_session_id = autogen.runtime_logging.start(logger_type="file", config={"filename": "runtime.log"})
+            logging_session_id = autogen.runtime_logging.start(
+                logger_type="file", config={"filename": "runtime.log"}
+            )
             print("Logging session ID: " + str(logging_session_id))
 
-            chat_result = await st.session_state.agents['MedicalResearcher']['object'].a_initiate_chat(
+            chat_result = await st.session_state.agents["MedicalResearcher"][
+                "object"
+            ].a_initiate_chat(
                 recipient=st.session_state.MedicalManager,
                 message=prompt,
                 max_turns=2,
-                is_termination_msg=is_termination_msg
+                is_termination_msg=is_termination_msg,
             )
             autogen.runtime_logging.stop()
-           
+
             logger.info(f"Final Response: {chat_result.chat_history[-1]['content']}")
+
 
 if __name__ == "__main__":
     loop = asyncio.new_event_loop()

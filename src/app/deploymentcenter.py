@@ -3,6 +3,7 @@ from typing import Optional
 
 # Load environment variables
 import streamlit as st
+
 from src.app.managers import create_azure_openai_manager
 
 
@@ -48,7 +49,6 @@ def load_default_deployment(
         value is not None for value in default_deployment.values() if value != False
     ):
         st.session_state.deployments[default_deployment["name"]] = default_deployment
-
 
 
 def add_deployment_aoai_form() -> None:

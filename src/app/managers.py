@@ -1,5 +1,7 @@
-from src.aoai.azure_openai import AzureOpenAIManager
 from typing import Optional
+
+from src.aoai.azure_openai import AzureOpenAIManager
+
 
 def create_azure_openai_manager(
     api_key: str, azure_endpoint: str, api_version: str, deployment_id: str
