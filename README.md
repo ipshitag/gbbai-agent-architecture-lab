@@ -51,7 +51,7 @@ For more details, please visit the Labs [README](labs/README.md).
 
 ## 🚀 Uses Cases
 
-**Cooming very soon**
+**Coming very soon...Stay Tuned**
 
 ## 📚 More Resources
 
